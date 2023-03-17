@@ -1,37 +1,64 @@
 class ZTBOX_CL_CSVMAN definition
   public
   final
-  create public .
+  create public
+
+  global friends ZTBOX_CL_CSVMAN_FIELD .
 
 public section.
 
   types:
-    BEGIN OF ty_config,
-        header      TYPE flag,
-        dquotes     TYPE string,
-        separator   TYPE string,
-        convexit    TYPE flag,
-        keep_spaces TYPE flag,
-        mapping     TYPE flag,
-      END OF ty_config .
-  types:
     BEGIN OF ty_order,
-             pos   TYPE int4,
-             field TYPE feldname,
-           END OF ty_order .
+        pos   TYPE i,
+        field TYPE name_feld,
+      END OF ty_order .
   types:
     ty_order_t TYPE TABLE OF ty_order WITH DEFAULT KEY .
+  types:
+    BEGIN OF ty_core_config,
+        enclosing      TYPE string,
+        convexit       TYPE flag,
+        alignment      TYPE i,
+        keep_initials  TYPE flag,
+        country_format TYPE land1,
+      END OF ty_core_config .
+  types:
+    BEGIN OF ty_field_conf.
+    TYPES field  TYPE name_feld.
+    TYPES config TYPE ty_core_config.
+    TYPES: END OF ty_field_conf .
+  types:
+    ty_field_conf_t TYPE TABLE OF ty_field_conf WITH DEFAULT KEY .
+  types:
+    BEGIN OF ty_config.
+        INCLUDE TYPE ty_core_config.
+    TYPES header TYPE flag.
+    TYPES separator      TYPE string.
+    TYPES escapator      TYPE string.
+    TYPES mapping        TYPE flag.
+    TYPES exclude_fields TYPE name_feld_tty.
+    TYPES fields_order   TYPE ty_order_t.
+    TYPES end_of_line    TYPE string.
+    TYPES fields_config  TYPE ty_field_conf_t.
+    TYPES include_only   type flag.
+    TYPES: END OF ty_config .
 
+  class-methods CLASS_CONSTRUCTOR .
   methods CONFIGURE
     importing
       !I_HEADER type FLAG optional
-      !I_DQUOTES type STRING optional
+      !I_ENCLOSING type STRING optional
+      !I_ESCAPATOR type STRING optional
       !I_SEPARATOR type STRING optional
       !I_CONVEXIT type FLAG optional
-      !I_KEEP_SPACES type FLAG optional
+      !I_ALIGNMENT type I optional
       !I_MAPPING type FLAG optional
-      !I_EXCLUDE_FIELDS type STRING_TABLE optional
-      !I_ORDER type TY_ORDER_T optional .
+      !I_EXCLUDE_FIELDS type NAME_FELD_TTY optional
+      !I_ORDER type TY_ORDER_T optional
+      !I_KEEP_INITIALS type FLAG optional
+      !I_COUNTRY_FORMAT type LAND1 optional
+      !I_END_OF_LINE type STRING optional
+      !I_FIELDS_CONF type TY_FIELD_CONF_T optional .
   methods READ_CSV
     importing
       !IT_CSV type STRING_TABLE
@@ -41,15 +68,26 @@ public section.
     importing
       !IT_TABLE type TABLE
     returning
-      value(R_CSV) type STRING_TABLE .
+      value(R_CSV) type STRING .
   methods CONSTRUCTOR .
   methods GET_FIRST_LINE
     returning
       value(R_HEADER) type STRING_TABLE .
+  class-methods TO_TABLE_STRING
+    importing
+      !I_STR type STRING
+      !I_EOL type ANY default CL_ABAP_CHAR_UTILITIES=>CR_LF
+    returning
+      value(R_RES) type STRING_TABLE .
+  methods GET_FIELD
+    importing
+      !I_NAME type FELD_NAME
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN_FIELD .
 protected section.
-PRIVATE SECTION.
+private section.
 
-  TYPES:
+  types:
     BEGIN OF ty_tabinfo,
       field     TYPE feldname,
       rollname  TYPE string,
@@ -58,38 +96,70 @@ PRIVATE SECTION.
       decimals  TYPE int4,
       convexit  TYPE string,
       type_kind TYPE c LENGTH 1,
+      type_cat  TYPE c LENGTH 1,
       order     TYPE int4,
+      c_ref     TYPE REF TO data,
     END OF ty_tabinfo .
-  TYPES:
+  types:
     ty_tabinfo_t TYPE TABLE OF ty_tabinfo WITH KEY field .
+  types:
+    BEGIN OF ty_typekind_map,
+      typekind TYPE abap_typekind,
+      type_cat TYPE c LENGTH 1,
+    END OF ty_typekind_map .
+  types:
+    ty_typekind_map_t TYPE TABLE OF ty_typekind_map WITH DEFAULT KEY .
+  types:
+    BEGIN OF ty_fields,
+      name      TYPE feld_Name,
+      position  TYPE i,
+      field_obj TYPE REF TO ztbox_cl_csvman_field,
+    END OF ty_fields .
+  types:
+    ty_fields_t TYPE TABLE OF ty_fields .
 
-  DATA _configuration TYPE ty_config .
-  DATA _tab_info TYPE ty_tabinfo_t .
-  DATA _csv_to_read TYPE string_table .
-  DATA _table_ref TYPE REF TO data .
-  DATA _mappings TYPE string_table .
-  DATA _exclude_fields TYPE string_table .
-  DATA _orders TYPE ty_order_t .
+  data _CONFIGURATION type TY_CONFIG .
+  data _TAB_INFO type TY_TABINFO_T .
+  data _CSV_TO_READ type STRING_TABLE .
+  data _TABLE_REF type ref to DATA .
+  data _MAPPINGS type STRING_TABLE .
+  class-data _TYPES_MAP type TY_TYPEKIND_MAP_T .
+  data _FIELDS_CONF type TY_FIELD_CONF .
+  data _FIELDS type TY_FIELDS_T .
 
-  METHODS _line_to_csv
-    IMPORTING
-      !is_line     TYPE any
-    RETURNING
-      VALUE(r_csv) TYPE string .
-  METHODS _set_tabinfo
-    IMPORTING
-      !it_table TYPE table .
-  METHODS _csv_to_line
-    IMPORTING
-      !iv_csv TYPE string .
-  METHODS _get_header
-    RETURNING
-      VALUE(r_header) TYPE string .
-  METHODS _mapping
-    IMPORTING
-      !i_ix       TYPE int4
-    RETURNING
-      VALUE(r_jx) TYPE int4 .
+  methods _LINE_TO_CSV
+    importing
+      !IS_LINE type ANY
+    returning
+      value(R_CSV) type STRING .
+  methods _SET_TABINFO
+    importing
+      !IT_TABLE type TABLE .
+  methods _CSV_TO_LINE
+    importing
+      !IV_CSV type STRING .
+  methods _GET_HEADER
+    returning
+      value(R_HEADER) type STRING .
+  methods _MAPPING
+    importing
+      !I_IX type INT4
+    returning
+      value(R_JX) type INT4 .
+  methods _DATE_FORMAT
+    importing
+      !I_DATE type DATUM
+      !I_COUNTRY type LAND1 optional
+    returning
+      value(R_RES) type STRING .
+  methods _NUM_FORMAT
+    importing
+      !I_NUM type NUMERIC
+      !I_COUNTRY type LAND1 optional
+    returning
+      value(R_RES) type STRING .
+  class-methods _SET_TYPES_MAP .
+  methods _REORDER_FIELDS .
 ENDCLASS.
 
 
@@ -99,49 +169,32 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
   METHOD configure.
 
-    IF i_header IS SUPPLIED.
-      _configuration-header = i_header.
-    ENDIF.
+    _configuration-header         = COND #( WHEN i_header         IS SUPPLIED THEN i_header         ELSE _configuration-header ).
+    _configuration-enclosing      = COND #( WHEN i_enclosing      IS SUPPLIED THEN i_enclosing      ELSE _configuration-enclosing ).
+    _configuration-separator      = COND #( WHEN i_separator      IS SUPPLIED THEN i_separator      ELSE _configuration-separator ).
+    _configuration-convexit       = COND #( WHEN i_convexit       IS SUPPLIED THEN i_convexit       ELSE _configuration-convexit ).
+    _configuration-alignment      = COND #( WHEN i_alignment      IS SUPPLIED THEN i_alignment      ELSE _configuration-alignment ).
+    _configuration-keep_initials  = COND #( WHEN i_keep_initials  IS SUPPLIED THEN i_keep_initials  ELSE _configuration-keep_initials ).
+    _configuration-country_format = COND #( WHEN i_country_format IS SUPPLIED THEN i_country_format ELSE _configuration-country_format ).
+    _configuration-mapping        = COND #( WHEN i_mapping        IS SUPPLIED THEN i_mapping        ELSE _configuration-mapping ).
+    _configuration-end_of_line    = COND #( WHEN i_end_of_line    IS SUPPLIED THEN I_end_of_line    ELSE _configuration-end_of_line ).
 
-    IF i_dquotes IS SUPPLIED.
-      _configuration-dquotes = i_dquotes.
-    ENDIF.
-
-    IF i_separator IS SUPPLIED.
-      _configuration-separator = i_separator.
-    ENDIF.
-
-    IF i_convexit IS SUPPLIED.
-      _configuration-convexit = i_convexit.
-    ENDIF.
-
-    IF i_keep_spaces IS SUPPLIED.
-      _configuration-keep_spaces = i_keep_spaces.
-    ENDIF.
-
-    IF i_mapping IS SUPPLIED.
-      _configuration-mapping = i_mapping.
-    ENDIF.
-
-    IF i_exclude_fields IS SUPPLIED.
-      _exclude_fields = i_exclude_fields.
-    ENDIF.
-
-    IF i_order IS SUPPLIED.
-      _orders = i_order.
-    ENDIF.
+    _configuration-exclude_fields = i_exclude_fields.
+    _configuration-fields_order   = i_order.
+    _configuration-fields_config  = i_fields_conf.
+    _configuration-escapator      = i_escapator.
 
   ENDMETHOD.
 
 
   METHOD constructor.
 
-    _configuration = VALUE #(
-      header      = abap_true
-      separator   = |;|
-      convexit    = abap_true
-      keep_spaces = abap_true
-      dquotes     = || ).
+    configure(
+      i_header      = abap_true
+      i_separator   = CONV #( cl_abap_char_utilities=>horizontal_tab )
+      i_alignment   = cl_abap_format=>a_left
+      i_convexit    = abap_true
+      i_end_of_line = CONV #( cl_abap_char_utilities=>cr_lf ) ).
 
   ENDMETHOD.
 
@@ -149,14 +202,17 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   METHOD create_csv.
 
     _set_tabinfo( it_table ).
+    _reorder_fields( ).
 
     IF _configuration-header EQ abap_true.
-      r_csv = VALUE #( ( _get_header( ) ) ).
+      r_csv = |{ _get_header( ) }{ _configuration-end_of_line }|.
     ENDIF.
 
-    LOOP AT it_table ASSIGNING FIELD-SYMBOL(<fs_line>).
+    LOOP AT it_table ASSIGNING FIELD-SYMBOL(<line>).
 
-      r_csv = VALUE #( BASE r_csv ( _line_to_csv( <fs_line> ) ) ).
+      DATA(eof) = COND #( WHEN sy-tabix NE lines( it_table ) THEN _configuration-end_of_line ELSE space ).
+
+      r_csv = |{ r_csv }{ _line_to_csv( <line> ) }{ eof }|.
 
     ENDLOOP.
 
@@ -179,19 +235,13 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
     _set_tabinfo( ct_table ).
 
-    LOOP AT it_csv INTO DATA(lv_csv).
+    LOOP AT it_csv INTO DATA(csv).
 
-      IF _configuration-header EQ abap_true.
-
-        IF sy-tabix EQ 1.
-          SPLIT lv_csv AT _configuration-separator INTO TABLE _mappings.
-        ENDIF.
-
-        CHECK sy-tabix > 1.
-
+      IF _configuration-header EQ abap_true AND sy-tabix EQ 1.
+        SPLIT csv AT _configuration-separator INTO TABLE _mappings.
       ENDIF.
 
-      _csv_to_line( lv_csv ).
+      _csv_to_line( csv ).
 
     ENDLOOP.
 
@@ -200,89 +250,93 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
   METHOD _csv_to_line.
 
-    DATA lv_csv     TYPE string.
-    DATA lv_val     TYPE string.
-    DATA lv_ix      TYPE i.
-    DATA lv_jx      TYPE i.
-    DATA lv_start   TYPE i.
-    DATA lv_end     TYPE i.
-    DATA lv_off     TYPE i.
+    DATA(csv) = VALUE string( ).
 
-    lv_csv = iv_csv.
+    csv = iv_csv.
 
-    FIELD-SYMBOLS <fs_tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
-    DATA lo_line        TYPE REF TO data.
-    ASSIGN _table_ref->* TO <fs_tab>.
-    CREATE DATA lo_line LIKE LINE OF <fs_tab>.
-    ASSIGN lo_line->* TO FIELD-SYMBOL(<fs_row>).
+    DATA line             TYPE REF TO data.
+    ASSIGN _table_ref->*  TO <tab>.
+    CREATE DATA line      LIKE LINE OF <tab>.
+    ASSIGN line->*        TO FIELD-SYMBOL(<row>).
 
-    IF _configuration-dquotes IS INITIAL.
-      SPLIT lv_csv AT _configuration-separator INTO TABLE DATA(lt_values).
+    IF _configuration-enclosing IS INITIAL.
+      SPLIT csv AT _configuration-separator INTO TABLE DATA(values).
     ELSE.
-      FIND ALL OCCURRENCES OF _configuration-dquotes IN lv_csv RESULTS DATA(lt_res).
+      FIND ALL OCCURRENCES OF _configuration-enclosing IN csv RESULTS DATA(quotes).
     ENDIF.
 
-    LOOP AT _tab_info INTO DATA(ls_info).
-      lv_ix = sy-tabix.
+    LOOP AT _tab_info INTO DATA(cat).
+      DATA(ix) = sy-tabix.
 
-      ASSIGN COMPONENT ls_info-field OF STRUCTURE <fs_row> TO FIELD-SYMBOL(<fs_val>).
+      ASSIGN COMPONENT cat-field OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
       CHECK sy-subrc EQ 0.
 
-      lv_jx = _mapping( lv_ix ).
-      CHECK lv_jx > 0.
+      DATA(jx) = _mapping( ix ).
+      CHECK jx > 0.
 
-      IF lt_values IS NOT INITIAL.
-        lv_val = VALUE #( lt_values[ lv_jx ] OPTIONAL ).
+      IF values IS NOT INITIAL.
+        DATA(val) = VALUE #( values[ jx ] OPTIONAL ).
       ELSE.
-        CLEAR: lv_start, lv_end.
-        lv_start  = VALUE #( lt_res[ ( lv_jx * 2 ) - 1 ]-offset OPTIONAL ).
-        lv_end    = VALUE #( lt_res[ lv_jx * 2 ]-offset OPTIONAL ).
 
-        ADD 1 TO lv_start.
+        DATA(start)  = VALUE #( quotes[ ( jx * 2 ) - 1 ]-offset OPTIONAL ).
+        DATA(end)    = VALUE #( quotes[ jx * 2 ]-offset OPTIONAL ).
 
-        CLEAR lv_off.
-        lv_off = lv_end - lv_start.
+        ADD 1 TO start.
 
-        lv_val = lv_csv+lv_start(lv_off).
+        DATA(off) = end - start.
+
+        val = csv+start(off).
       ENDIF.
 
-      CONDENSE lv_val.
+      CONDENSE val.
 
-      IF lv_val IS NOT INITIAL.
+      IF val IS NOT INITIAL.
         cl_rsan_ut_conversion_exit=>convert_to_intern(
             EXPORTING
               i_fieldinfo      = VALUE #(
-                inttype   = ls_info-type_kind
-                convexit  = ls_info-convexit
-                decimals  = ls_info-decimals
-                outputlen = ls_info-outlen
-                length    = ls_info-outlen
-                datatype  = ls_info-data_type )
-              i_external_value  = lv_val
+                inttype   = cat-type_kind
+                convexit  = cat-convexit
+                decimals  = cat-decimals
+                outputlen = cat-outlen
+                length    = cat-outlen
+                datatype  = cat-data_type )
+              i_external_value  = val
           IMPORTING
-              e_internal_value  = lv_val ).
+              e_internal_value  = val ).
       ENDIF.
 
-      <fs_val> = lv_val.
+      <val> = val.
 
     ENDLOOP.
 
-    INSERT <fs_row> INTO TABLE <fs_tab>.
+    INSERT <row> INTO TABLE <tab>.
 
   ENDMETHOD.
 
 
   METHOD _get_header.
 
-    DATA lv_val TYPE string.
+    LOOP AT _fields INTO DATA(field).
 
-    LOOP AT _tab_info INTO DATA(ls_info).
+      IF    _configuration-include_only EQ abap_true
+        AND field-field_obj->_field_config-include EQ abap_false
+        OR  field-field_obj->_field_config-exclude EQ abap_true.
 
-      CLEAR lv_val.
-      lv_val = COND #( WHEN _configuration-dquotes IS INITIAL THEN ls_info-field ELSE |{ _configuration-dquotes }{ ls_info-field }{ _configuration-dquotes }| ).
+        CONTINUE.
 
-      r_header = COND #( WHEN r_header IS INITIAL THEN lv_val ELSE |{ r_header }{ _configuration-separator }{ lv_val }| ).
+      ENDIF.
+
+      DATA(val) = COND string(
+        WHEN _configuration-enclosing IS INITIAL
+          THEN field-name
+          ELSE |{ _configuration-enclosing }{ field-name }{ _configuration-enclosing }| ).
+
+      r_header = COND #(
+        WHEN r_header IS INITIAL
+          THEN val
+        ELSE |{ r_header }{ _configuration-separator }{ val }| ).
 
     ENDLOOP.
 
@@ -291,51 +345,58 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
   METHOD _line_to_csv.
 
-    DATA lv_val        TYPE string.
-    DATA lv_val_spaces TYPE c LENGTH 3000.
-    DATA lv_spaces     TYPE i.
+    LOOP AT _fields INTO DATA(field).
 
-    LOOP AT _tab_info INTO DATA(ls_info).
-
-      ASSIGN COMPONENT ls_info-field OF STRUCTURE is_line TO FIELD-SYMBOL(<fs_val>).
+      ASSIGN COMPONENT field-name OF STRUCTURE is_line TO FIELD-SYMBOL(<val>).
       CHECK sy-subrc EQ 0.
 
-      lv_val = <fs_val>.
+***      DATA(fields_config) = field-field_obj->_field_config.
+***
+***      ASSIGN fields_config-c_ref->* TO FIELD-SYMBOL(<val_c>).
+***
+***      DATA(val) = VALUE string( ).
+***
+***      IF <val> IS NOT INITIAL OR fields_config-keep_initials EQ abap_true.
+***
+***        CASE fields_config-type_cat.
+***          WHEN cl_abap_typedescr=>typekind_packed.
+***            val = _num_format( i_num = <val> i_country = fields_config-country_format ).
+***
+***          WHEN cl_abap_typedescr=>typekind_date.
+***            val = _date_format( i_date = <val> i_country = fields_config-country_format ).
+***
+***          WHEN OTHERS.
+***            WRITE <val> TO <val_c>.
+***            val = COND #( WHEN fields_config-convexit EQ abap_true THEN <val_c> ELSE <val> ).
+***
+***            IF _configuration-escapator IS NOT INITIAL.
+***              REPLACE ALL OCCURRENCES OF _configuration-separator IN val WITH |{ _configuration-escapator }{ _configuration-separator }|.
+***            ENDIF.
+***
+***        ENDCASE.
+***
+***        DATA(align) = COND #(
+***          WHEN fields_config-alignment IS NOT INITIAL
+***            THEN fields_config-alignment
+***          ELSE cl_abap_format=>a_left ).
+***
+***        CLEAR <val_c>.
+***        <val_c> = |{ val WIDTH = fields_config-outlen ALIGN = (align) }|.
+***
+***      ENDIF.
+***
+***      CLEAR val.
+***      val = COND #(
+***        WHEN _configuration-enclosing IS NOT INITIAL
+***          THEN |{ fields_config-enclosing }{ <val_c> }{ fields_config-enclosing }|
+***        ELSE <val_c> ).
 
-      IF <fs_val> IS INITIAL.
-        CLEAR lv_val.
-      ENDIF.
+      DATA(val) = field-field_obj->get_value( <val> ).
 
-      IF _configuration-convexit IS NOT INITIAL AND lv_val IS NOT INITIAL.
-        cl_rsan_ut_conversion_exit=>convert_to_extern(
-          EXPORTING
-            i_fieldinfo      = VALUE #(
-              inttype   = ls_info-type_kind
-              convexit  = ls_info-convexit
-              decimals  = ls_info-decimals
-              outputlen = ls_info-outlen
-              datatype  = ls_info-data_type )
-            i_internal_value = lv_val
-        IMPORTING
-            e_external_value = lv_val ).
-      ENDIF.
-
-      CONDENSE lv_val.
-
-      IF _configuration-keep_spaces EQ abap_true.
-        CLEAR: lv_val_spaces, lv_spaces.
-
-        lv_spaces = ls_info-outlen - strlen( lv_val ).
-        lv_val_spaces+lv_spaces = lv_val.
-
-        lv_val = lv_val_spaces.
-      ENDIF.
-
-      IF _configuration-dquotes IS NOT INITIAL.
-        lv_val = |{ _configuration-dquotes }{ lv_val }{ _configuration-dquotes }|.
-      ENDIF.
-
-      r_csv = COND #( WHEN r_csv IS INITIAL THEN lv_val ELSE |{ r_csv }{ _configuration-separator }{ lv_val }| ).
+      r_csv = COND #(
+        WHEN r_csv IS INITIAL
+          THEN val
+        ELSE |{ r_csv }{ _configuration-separator }{ val }| ).
 
     ENDLOOP.
 
@@ -364,40 +425,142 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
     CLEAR _tab_info.
 
-    DATA(lo_tdesc) = cl_abap_typedescr=>describe_by_data( it_table ).
-    CHECK lo_tdesc->kind EQ cl_abap_typedescr=>kind_table.
+    DATA c_ref TYPE REF TO data.
 
-    DATA(lo_table) = CAST cl_abap_tabledescr( lo_tdesc ).
+    DATA(tdesc) = cl_abap_typedescr=>describe_by_data( it_table ).
 
-    DATA(lo_ldesc) = lo_table->get_table_line_type( ).
-    CHECK lo_ldesc->type_kind EQ cl_abap_typedescr=>typekind_struct2 OR lo_ldesc->type_kind EQ cl_abap_typedescr=>typekind_struct1.
+    CHECK tdesc->kind EQ cl_abap_typedescr=>kind_table.
 
-    DATA(lo_line) = CAST cl_abap_structdescr( lo_ldesc ).
+    DATA(table_desc)  = CAST cl_abap_tabledescr( tdesc ).
+    DATA(line_type)   = table_desc->get_table_line_type( ).
 
-    LOOP AT lo_line->components INTO DATA(ls_comp).
+    CHECK
+      line_type->type_kind EQ cl_abap_typedescr=>typekind_struct1 OR
+      line_type->type_kind EQ cl_abap_typedescr=>typekind_struct2.
 
-      CHECK NOT line_exists( _exclude_fields[ table_line = ls_comp-name ] ).
+    DATA(line_desc) = CAST cl_abap_structdescr( line_type ).
 
-      DATA(lo_elem) = CAST cl_abap_elemdescr( lo_line->get_component_type( ls_comp-name ) ).
+    LOOP AT line_desc->components INTO DATA(comp).
 
-      _tab_info = VALUE #( BASE _tab_info (
-        field     = ls_comp-name
-        decimals  = ls_comp-decimals
-        type_kind = ls_comp-type_kind
-        order     = VALUE #( _orders[ field = ls_comp-name ]-pos OPTIONAL )
-        data_type = COND #( WHEN ls_comp-type_kind EQ 'C' THEN 'CHAR'
-                            WHEN ls_comp-type_kind EQ 'N' THEN 'NUMC'
-                            WHEN ls_comp-type_kind EQ 'D' THEN 'DATS'
-                            WHEN ls_comp-type_kind EQ 'T' THEN 'TIMS' )
-        rollname  = lo_elem->help_id
-        outlen    = lo_elem->output_length
-        convexit  = COND #( WHEN lo_elem->edit_mask IS NOT INITIAL THEN lo_elem->edit_mask+2 ELSE space ) ) ).
+      DATA(csv_field) = NEW ztbox_cl_csvman_field(
+        i_name  = comp-name
+        i_csv   = me ).
+
+      csv_field->order( sy-tabix ).
+
+      DATA(ref_components) = line_desc->get_components( ).
+      DATA(elem_desc) = CAST cl_abap_elemdescr( VALUE #( ref_components[ name = comp-name ]-type OPTIONAL ) ).
+
+      csv_field->outlen( elem_desc->output_length ).
+      csv_field->char_reference( elem_desc ).
+      csv_field->type_category( VALUE #( _types_map[ typekind = comp-type_kind ]-type_cat OPTIONAL ) ).
+
+      APPEND VALUE #(
+        name      = comp-name
+        position  = csv_field->_field_config-order
+        field_obj = csv_field ) TO _fields.
 
     ENDLOOP.
 
-    IF _orders IS NOT INITIAL.
-      SORT _tab_info BY order.
-    ENDIF.
+  ENDMETHOD.
+
+
+  METHOD class_constructor.
+
+    _set_types_map( ).
+
+  ENDMETHOD.
+
+
+  METHOD get_field.
+
+    r_res = VALUE #( _fields[ name = i_name ]-field_obj OPTIONAL ).
+
+  ENDMETHOD.
+
+
+  METHOD to_table_string.
+
+    CLEAR r_res.
+    SPLIT i_str AT i_eol INTO TABLE r_res.
+
+  ENDMETHOD.
+
+
+  METHOD _date_format.
+
+    r_res = |{ i_date COUNTRY = i_country }|.
+
+  ENDMETHOD.
+
+
+  METHOD _num_format.
+
+    r_res = |{ i_num COUNTRY = i_country }|.
+
+  ENDMETHOD.
+
+
+  METHOD _reorder_fields.
+
+    LOOP AT _fields ASSIGNING FIELD-SYMBOL(<field>).
+
+      <field>-position = <field>-field_obj->_field_config-order.
+
+    ENDLOOP.
+
+    SORT _fields BY position.
+
+  ENDMETHOD.
+
+
+  METHOD _set_types_map.
+
+    _types_map = VALUE #(
+      ( typekind  = cl_abap_typedescr=>typekind_char
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_num
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_numeric
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>typekind_clike
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>typekind_csequence
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>typekind_simple
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>typekind_string
+        type_cat  = cl_abap_typedescr=>typekind_char )
+      ( typekind  = cl_abap_typedescr=>typekind_date
+        type_cat  = cl_abap_typedescr=>typekind_date )
+      ( typekind  = cl_abap_typedescr=>typekind_time
+        type_cat  = cl_abap_typedescr=>typekind_time )
+      ( typekind  = cl_abap_typedescr=>typekind_utclong
+        type_cat  = cl_abap_typedescr=>typekind_time )
+      ( typekind  = cl_abap_typedescr=>typekind_decfloat
+        type_cat  = cl_abap_typedescr=>typekind_packed )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_DECFLOAt16
+        type_cat  = cl_abap_typedescr=>typekind_packed )
+      ( typekind  = cl_abap_typedescr=>typekind_decfloat34
+        type_cat  = cl_abap_typedescr=>typekind_packed )
+      ( typekind  = cl_abap_typedescr=>typekind_float
+        type_cat  = cl_abap_typedescr=>typekind_packed )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_packed
+        type_cat  = cl_abap_typedescr=>typekind_packed )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_int
+        type_cat  = cl_abap_typedescr=>TYPEKIND_int )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_int1
+        type_cat  = cl_abap_typedescr=>TYPEKIND_int )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_int2
+        type_cat  = cl_abap_typedescr=>TYPEKIND_int )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_int8
+        type_cat  = cl_abap_typedescr=>TYPEKIND_int )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_hex
+        type_cat  = cl_abap_typedescr=>TYPEKIND_xstring )
+      ( typekind  = cl_abap_typedescr=>typekind_xsequence
+        type_cat  = cl_abap_typedescr=>TYPEKIND_xstring )
+      ( typekind  = cl_abap_typedescr=>TYPEKIND_xstring
+        type_cat  = cl_abap_typedescr=>TYPEKIND_xstring ) ).
 
   ENDMETHOD.
 ENDCLASS.
