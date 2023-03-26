@@ -1,3 +1,3 @@
 # ABAP CSV Manager
 
-![Example](CSV_Example.jpg)
+![Example](CSV_Example.png)
