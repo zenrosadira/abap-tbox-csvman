@@ -9,8 +9,8 @@ Once instantiated you can configure the csv management object:
 - `csv_man->quotechar( |"| ).`  *To quote fields, default is none*
 - `csv_man->end_of_line( '|' ).` *Line-terminator char, default is Carriage Return and Line Feed* `%_CR_LF`
 - `csv_man->escapechar( |/| ).` *To escape special characters, both in read and write mode*
-- `csv_man->doublequote( abap_true ).` *To place a quotechar character before a quotechar character found in a field*
-- `csv_man->quoting( ztbox_cl_csvman=>c_quote_minimal )` *To restrict quoting application, with these options:*
+- `csv_man->doublequote( abap_true ).` *To escape a quotechar character with a quotechar character*
+- `csv_man->quoting( ztbox_cl_csvman=>c_quote_minimal ).` *To restrict quoting application, with these options:*
   - `ztbox_cl_csvman=>c_quote_all` *to apply quotechar character to all fields (this is default behaviour if a quotechar is set)*
   - `ztbox_cl_csvman=>c_quote_minimal` *to apply quotechar character only to fields containing special characters*
   - `ztbox_cl_csvman=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields*
