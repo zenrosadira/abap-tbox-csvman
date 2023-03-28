@@ -26,10 +26,10 @@
   - `X` *to output numbers like* `1,234,567.89`
   - `Y` *to output numbers like* `1 234 567,89`
 - ``csv_man->country( `US` ).`` *To output date, time and numbers according to a country rules (less specific than previous methods).*
-- `csv_man->decimals( 3 ).` *To write numerical fields with the specified decimals precision*
+- `csv_man->decimals( 3 ).` *To write numerical fields with the specified decimals precision.*
 - `csv_man->convexit( abap_true ).` *To apply domain conversion exit, internal-to-external in write mode, external-to-internal in read mode.*
 - `csv_man->condense( abap_true ).` *To remove leading and trailing spaces.*
-- `csv_man->keep_init( abap_true ).` *To maintain initial values: if set to* `abap_false` *a number field containing only 0, as well as an initial date or time, became blank in write mode. Default option is* `abap_true`.
+- `csv_man->keep_init( abap_true ).` *To maintain initial values: if set to* `abap_false` *a numerical field containing only 0, as well as an initial date or initial time, became blank in write mode. Default option is* `abap_true`.
 - `csv_man->alignment( cl_abap_format=>a_right ).` *To align fields content according to the following options:*
   - `cl_abap_format=>a_left` *To justify text on the left (default option)*
   - `cl_abap_format=>a_right` *To justify text on the right*
@@ -48,7 +48,7 @@ You can also exclude some fields from the CSV generation/reading process using `
 csv_man->field( `MANDT` )->exclude( abap_true ).
 ```
 
-Viceversa, if you work with a table having too many fields, you can generate or reading a CSV considering only a small subset of fields using `include( abap_true )` method. Once you have called `include` for a field, only fields for which `include` has been called will be considered,
+Viceversa, if you work with a table having too many fields, you can generate or reading a CSV considering only a small subset of fields using `include( abap_true )` method. Once you have called `include` for a field, only fields for which `include` has been called will be considered.
 
 ```abap
 csv_man->field( `MATNR` )->include( abap_true ).
@@ -61,12 +61,13 @@ If the order of the fields in the table does not match the columns in the CSV to
 csv_man->field( `MATNR` )->csv_position( 2 ).
 csv_man->field( `WERKS` )->csv_position( 1 ).
 ```
+In this way, the following table:
 | MATNR  | WERKS |
 | ------- | ------ |
 | AAAA01  | US01  |
 | BBBB02  | US02  |
 
-gives as output:
+gives this CSV as output:
 ```csv
 WERKS,MATNR
 US01,AAAA01
