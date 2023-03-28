@@ -98,7 +98,7 @@ into a table with structure `DATE [D(8)] | TIME [T(6)] | AMOUNT [P(7) DEC(2)]`. 
 | 20230228 | 000000 | -894.00 |
 | 20221231 | 000001 | 0.00 |
 
-And the validation fails is this table
+And the `get_validation_fails( )` output is this table:
 | ROW  | COL | TABLE_FIELD | RAW_VALUE | SAP_VALUE | METHOD_FAIL |
 | ------- | ------- | ------- | ------- | ------- | ------- |
 | 1 | 1 | DATE | 31/02/2023 | | DATE_PLAUSIBILITY |
