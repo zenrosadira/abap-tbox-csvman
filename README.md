@@ -42,16 +42,14 @@
 csv_man->field( `AMOUNT_USD` )->number_format( `X` ).
 csv_man->field( `AMOUNT_EUR` )->country( `IT` )->decimals( 2 ).
 ```
-You can also exclude some fields from the CSV generation/reading process using `exclude( abap_true )` method
+You can also exclude some fields from the CSV generation/reading process using `exclude( abap_true )` method:
 
 ```abap
 csv_man->field( `MANDT` )->exclude( abap_true ).
 ```
 
-Viceversa, if you work with a table having too many fields, you can generate or reading a CSV considering only a small subset of fields using `include( abap_true )` method, as long as you have called `include_only( abap_true )` first
-
+Viceversa, if you work with a table having too many fields, you can generate or reading a CSV considering only a small subset of fields using `include( abap_true )` method. Once you have called `include` for a field, only fields for which `include` has been called will be considered,
 ```abap
-csv_man->include_only( abap_true ).`
-csv_man->field( `MATNR` )->include( abap_true ).`
-csv_man->field( `WERKS` )->include( abap_true ).`
+csv_man->field( `MATNR` )->include( abap_true ).
+csv_man->field( `WERKS` )->include( abap_true ).
 ```
