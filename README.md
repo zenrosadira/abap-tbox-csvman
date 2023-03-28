@@ -15,6 +15,8 @@
   - `ztbox_cl_csvman=>c_quote_minimal` *to apply quotechar character only to fields containing special characters;*
   - `ztbox_cl_csvman=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields;*
   - `ztbox_cl_csvman=>c_quote_none` *to never quotes fields (this is the default behaviour if no quotechar is set).*
+- `csv_man->header( abap_true ).` *To write/expect an header line in write/read mode
+- `csv_man->header_desc( abap_true ).` *To use long label description (from data element, in the log-on language) as header text field. If the field is not typed with a dictionary data element its name is still used as its description*
 
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
 
@@ -58,8 +60,9 @@ csv_man->field( `WERKS` )->include( abap_true ).
 If the order of the fields in the table does not match the columns in the CSV to generate or read, you can map each field with the corresponding csv-column position:
 
 ```abap
-csv_man->field( `MATNR` )->csv_position( 2 ).
-csv_man->field( `WERKS` )->csv_position( 1 ).
+csv_man->header_desc( abap_true ).
+csv_man->field( `MATNR` )->csv_position( 2 )->label( `Material!!!` ).
+csv_man->field( `WERKS` )->csv_position( 1 )->label( `THE Plant` ).
 ```
 In this way, the following table:
 | MATNR  | WERKS |
@@ -69,8 +72,10 @@ In this way, the following table:
 
 gives this CSV as output:
 ```csv
-WERKS,MATNR
+THE Plant,MATERIAL!!!
 US01,AAAA01
 US02,BBBB02
 ```
+
+`label( )` method set a custom label when `header_desc( )` is used.
 
