@@ -15,3 +15,13 @@ Once instantiated you can configure the csv management object:
   - `ztbox_cl_csvman=>c_quote_minimal` *to apply quotechar character only to fields containing special characters*
   - `ztbox_cl_csvman=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields*
   - `ztbox_cl_csvman=>c_quote_none` *to never quotes fields (this is the default behaviour if no quotechar is set)*
+
+> Nice, but I want also control fields output format, especially for date/time/number fields
+
+Sure, you can use these configurations:
+- `csv_man->date_format( |yyyy/dd/mm| ).` *To decide output format for date fields in write mode, or to declare expected format for date fields in read mode. You can use any format containing "dd", "mm", "yy", "yyyy" and an optional separator.*
+- `csv_man->time_format( |hh:mm:ss| ).` *Same as above, but for time fields.*
+- `csv_man->number_format( ).` Three options here:
+  -`` (blank) to output numbers like `1.234.567,89`
+  -`X` to output numbers like `1,234,567.89`
+  -`Y` to output numbers like `1 234 567,89`
