@@ -77,5 +77,5 @@ US01,AAAA01
 US02,BBBB02
 ```
 
-`label( )` method set a custom label when `header_desc( )` is used.
+`label( )` method set a custom header text when `header_desc( )` is used.
 
