@@ -79,3 +79,6 @@ US02,BBBB02
 
 `label( )` method set a custom header text when `header_desc( )` is used.
 
+:office_worker: **Regarding reading the csv, is there an automatism to help identify errors in the data?**
+
+:mage: We have it.
