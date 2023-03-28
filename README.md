@@ -21,7 +21,7 @@ Once instantiated you can configure the csv management object:
 Sure, you can use these configurations:
 - `csv_man->date_format( |yyyy/dd/mm| ).` *To decide output format for date fields in write mode, or to declare expected format for date fields in read mode. You can use any format containing "dd", "mm", "yy", "yyyy" and an optional separator.*
 - `csv_man->time_format( |hh:mm:ss| ).` *Same as above, but for time fields.*
-- `csv_man->number_format( ).` Three options here:
-  -`` (blank) to output numbers like `1.234.567,89`
-  -`X` to output numbers like `1,234,567.89`
-  -`Y` to output numbers like `1 234 567,89`
+- `csv_man->number_format( ).` *Three options here:*
+  - ` ` *(blank) to output numbers like* `1.234.567,89`
+  - `X` *to output numbers like* `1,234,567.89`
+  - `Y` *to output numbers like* `1 234 567,89`
