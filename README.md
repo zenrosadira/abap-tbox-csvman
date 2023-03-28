@@ -26,9 +26,18 @@
   - `X` *to output numbers like* `1,234,567.89`
   - `Y` *to output numbers like* `1 234 567,89`
 - `csv_man->country( 'US' ).` *To output date, time and numbers according to a country rules (less specific than previous methods).*
-- `csv_man->convexit( abap_true ).` *To apply data element conversion exit, internal-to-external in write mode, external-to-internal in read mode.*
+- `csv_man->decimals( 3 ).` *To write numerical fields with the specified decimals precision*
+- `csv_man->convexit( abap_true ).` *To apply domain conversion exit, internal-to-external in write mode, external-to-internal in read mode.*
 - `csv_man->condense( abap_true ).` *To remove leading and trailing spaces.*
-- `csv_man->keep_init( abap_true ).` *To maintain initial values: if set to* `abap_false` *a number field containing only 0, as well as an initial date, became blank in write mode. Default option is* `abap_true`.
+- `csv_man->keep_init( abap_true ).` *To maintain initial values: if set to* `abap_false` *a number field containing only 0, as well as an initial date or time, became blank in write mode. Default option is* `abap_true`.
 - `csv_man->alignment( cl_abap_format=>a_right ).` *To align fields content according to the following options:*
   - `cl_abap_format=>a_left` *To justify text on the left (default option)*
   - `cl_abap_format=>a_right` *To justify text on the right*
+
+:office_worker: **Ok cool. These are global configuration, valid for all the fields, aren't they? What if I want to set some format property to one field and a different property to another?.**
+:mage: You can restrict the application of the previous method to a single field calling `field( )` method first, e.g.:
+```
+csv_man->field( `AMOUNT_USD` )->number_format( `X` )
+csv_man->field( `AMOUNT_EUR` )->country( `IT` )
+```
+
