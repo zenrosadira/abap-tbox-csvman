@@ -24,9 +24,13 @@ csv_man->escapechar( |/| ).
 csv_man->doublequote( abap_true ).
 
 *** To restrict quoting application, with these options:
-*** ztbox_cl_csvman=>c_quote_all - to apply quotechar character to all fields (this is default if a quotechar is set)
-*** ztbox_cl_csvman=>c_quote_minimal - to apply quotechar character only to fields containing special characters
-*** ztbox_cl_csvman=>c_quote_nonnumeric - to apply quotechar character only to non-numeric fields
-*** ztbox_cl_csvman=>c_quote_nonte - never quotes fields (this is default if no quotechar is set)
+*** ztbox_cl_csvman=>c_quote_all 
+*** ---> to apply quotechar character to all fields (this is default if a quotechar is set)
+*** ztbox_cl_csvman=>c_quote_minimal
+*** ---> to apply quotechar character only to fields containing special characters
+*** ztbox_cl_csvman=>c_quote_nonnumeric 
+*** ---> to apply quotechar character only to non-numeric fields
+*** ztbox_cl_csvman=>c_quote_none
+*** ---> to never quotes fields (this is default if no quotechar is set)
 csv_man->quoting( ztbox_cl_csvman=>c_quote_minimal )
 ```
