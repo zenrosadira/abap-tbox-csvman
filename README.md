@@ -25,4 +25,4 @@ Sure, you can use these configurations:
   - ` ` *(blank) to output numbers like* `1.234.567,89`
   - `X` *to output numbers like* `1,234,567.89`
   - `Y` *to output numbers like* `1 234 567,89`
-- `csv_man->country( 'US' ).` *To output date, time and numbers according to a country rules (less specific than previous methods).
+- `csv_man->country( 'US' ).` *To output date, time and numbers according to a country rules (less specific than previous methods).*
