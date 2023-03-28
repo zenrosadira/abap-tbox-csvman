@@ -79,6 +79,28 @@ US02,BBBB02
 
 `label( )` method set a custom header text when `header_desc( )` is used.
 
-:office_worker: **Regarding reading the csv, is there an automatism to help identify errors in the data?**
+:office_worker: **Useful. Regarding reading the csv, is there an automatism to help identify errors in the data?**
 
-:mage: We have it.
+:mage: We have it. When a CSV is read, some validation checks are performed according to the data type of the target fields: date fields (if not initial) must be a valid and plausible date; time fields (if not initial) must contain a valid and plausible time, numerical fields (if not initial) must contain a valid number. Whenever any of these check fail, the contents are not transferred. You get a detailed report for the validation fails by calling `get_validations_fails( )`.
+
+Suppose you read this CSV:
+
+```csv
+31/02/2023,10:45:19,"1900,20"
+28/02/2023,25:00:00,"-894,23"
+31/12/2022,00:00:01,"12A4,43"
+```
+
+into a table with structure `DATE [D(8)] | TIME [T(6)] | AMOUNT [P(7) DEC(2)]`. The output will be
+| DATE  | TIME | AMOUNT |
+| ------- | ------ | ------ |
+| 00000000 | 104519 | 1900.20 |
+| 20230228 | 000000 | -894.00 |
+| 20221231 | 000001 | 0.00 |
+
+And the validation fails is this table
+| ROW  | COL | TABLE_FIELD | RAW_VALUE | SAP_VALUE | METHOD_FAIL |
+| ------- | ------- | ------- | ------- | ------- | ------- |
+| 1 | 1 | DATE | 31/02/2023 | | DATE_PLAUSIBILITY |
+| 2 | 2 | TIME | 25:00:00 | | TIME_PLAUSIBILITY |
+| 3 | 3 | AMOUNT | 12A4,43 | | VALID_NUMB |
