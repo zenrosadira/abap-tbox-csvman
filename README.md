@@ -16,7 +16,7 @@
   - `ztbox_cl_csvman=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields;*
   - `ztbox_cl_csvman=>c_quote_none` *to never quotes fields (this is the default behaviour if no quotechar is set).*
 
-:office_worker: **Nice, but I want also control fields output format, especially for date/time/number fields.**
+:office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
 
 :mage: Sure, you can use these configurations:
 - ``csv_man->date_format( `yyyy/dd/mm` ).`` *To decide output format for date fields in write mode, or to declare expected format for date fields in read mode. You can use any format containing "dd", "mm", "yy", "yyyy" and an optional separator.*
@@ -49,7 +49,27 @@ csv_man->field( `MANDT` )->exclude( abap_true ).
 ```
 
 Viceversa, if you work with a table having too many fields, you can generate or reading a CSV considering only a small subset of fields using `include( abap_true )` method. Once you have called `include` for a field, only fields for which `include` has been called will be considered,
+
 ```abap
 csv_man->field( `MATNR` )->include( abap_true ).
 csv_man->field( `WERKS` )->include( abap_true ).
 ```
+
+If the order of the fields in the table does not match the columns in the CSV to generate or read, you can map each field with the corresponding csv-column position:
+
+```abap
+csv_man->field( `MATNR` )->csv_position( 2 ).
+csv_man->field( `WERKS` )->csv_position( 1 ).
+```
+| MATNR  | WERKS |
+| ------- | ------ |
+| AAAA01  | US01  |
+| BBBB02  | US02  |
+
+gives as output:
+```csv
+WERKS,MATNR
+US01,AAAA01
+US02,BBBB02
+```
+
