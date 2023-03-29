@@ -109,8 +109,19 @@ And the `get_validation_fails( )` output is this table:
 | 2 | 2 | TIME | 25:00:00 | | TIME_PLAUSIBILITY |
 | 3 | 3 | AMOUNT | 12A4,43 | | VALID_NUMB |
 
-You can add also validation check: it must be an instance method with the following signature
+You can add also custom validation check: it must be an instance method with the following signature
 
 ```abap
 METHODS sample_check IMPORTING value TYPE string RETURNING VALUE(fail) TYPE flag.
 ```
+If, e.g., an object `sample_object` implements method `sample_check`, you can add this check to a field:
+
+```abap
+csv_man->field( `FIELD_NAME` )->add_post_validation(
+  object      = `sample_object`
+  method_name = `SAMPLE_CHECK` ).
+```
+
+in two ways: as a *pre validation* by calling method `add_pre_validation( )`, and as a *post validation* by calling method `add_post_validation( )`.
+Pre-validation checks are applied to raw data: parameter `value` is a string containing exactly the content of the field in the CSV;
+Post-validation checks are applied to transformed data: parameter `value` is a string containing the field value interally formatted for the SAP data type field target.
