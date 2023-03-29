@@ -33,8 +33,8 @@
 - `csv_man->condense( abap_true ).` *to remove leading and trailing spaces.*
 - `csv_man->keep_init( abap_true ).` *to maintain initial values: if set to* `abap_false` *a numerical field containing only 0, as well as an initial date or initial time, became blank in write mode. Default option is* `abap_true`.
 - `csv_man->alignment( cl_abap_format=>a_right ).` *to align fields content according to the following options:*
-  - `cl_abap_format=>a_left` *to justify text on the left (default option)*
-  - `cl_abap_format=>a_right` *to justify text on the right*
+  - `cl_abap_format=>a_left` *to justify text on the left (default option);*
+  - `cl_abap_format=>a_right` *to justify text on the right.*
 
 :office_worker: **Ok cool. These are global configuration, valid for all the fields, aren't they? What if I want to set some format property to one field and a different property to another?.**
 
