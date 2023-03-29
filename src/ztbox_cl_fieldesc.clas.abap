@@ -6,7 +6,19 @@ class ZTBOX_CL_FIELDESC definition
 
 public section.
 
+  constants C_DEC_SEPARATOR_3 type XUDCPFM value 'Y' ##NO_TEXT.
+  constants C_DEC_SEPARATOR_2 type XUDCPFM value 'X' ##NO_TEXT.
+  constants C_DEC_SEPARATOR_1 type XUDCPFM value '' ##NO_TEXT.
+
+  methods ADD_POST_VALIDATION
+    importing
+      !CHECK_OBJECT type ref to OBJECT optional
+      !CHECK_METHOD type SEOCMPNAME .
   methods CONSTRUCTOR .
+  methods ADD_PRE_VALIDATION
+    importing
+      !CHECK_OBJECT type ref to OBJECT optional
+      !CHECK_METHOD type SEOCMPNAME .
   methods WRITE
     importing
       !VALUE type ANY
@@ -22,15 +34,17 @@ public section.
   methods ASSIGN_ELEMENT
     importing
       !ELEM_DESC type ref to CL_ABAP_ELEMDESCR .
-  methods COUNTRY_FORMAT
+  methods COUNTRY
     importing
-      !I_COUNTRY type LAND1 .
+      !COUNTRY type LAND1
+    returning
+      value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods COPY
     importing
       !I_OBJ type ref to ZTBOX_CL_FIELDESC .
   methods ALIGNMENT
     importing
-      !I_PAR type I
+      !ALIGNMENT type I
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods CSV_POSITION
@@ -40,52 +54,52 @@ public section.
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods KEEP_INIT
     importing
-      !I_PAR type FLAG
+      !KEEP_INIT type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods LABEL
     importing
-      !I_PAR type STRING
+      !LABEL type STRING
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods EXCLUDE
     importing
-      !I_PAR type FLAG
+      !EXCLUDE type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods INCLUDE
     importing
-      !I_PAR type FLAG
+      !INCLUDE type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods CONDENSE
     importing
-      !I_PAR type FLAG
+      !CONDENSE type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods OUTPUT_LEN
     importing
-      !I_PAR type I
+      !OUTPUT_LEN type I
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods CONVEXIT
     importing
-      !I_PAR type FLAG
+      !CONVEXIT type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods DECIMALS
     importing
-      !I_PAR type I
+      !DECIMALS type I
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
-  methods ESCAPATOR
+  methods ESCAPECHAR
     importing
-      !I_PAR type CHAR1
+      !ESCAPECHAR type CHAR1
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
-  methods ENCLOSING
+  methods QUOTECHAR
     importing
-      !I_PAR type CHAR1
+      !QUOTECHAR type CHAR1
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC .
   methods CONFIG
@@ -103,14 +117,19 @@ public section.
   methods TO_DATE
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC_DATE .
+  methods NUMBER_FORMAT
+    importing
+      !NUMBER_FORMAT type XUDCPFM
+    returning
+      value(R_RES) type ref to ZTBOX_CL_FIELDESC_NUMB .
   methods TIME_FORMAT
     importing
-      !I_TIME_FORMAT type STRING
+      !TIME_FORMAT type STRING
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC_TIME .
   methods DATE_FORMAT
     importing
-      !I_DATE_FORMAT type STRING
+      !DATE_FORMAT type STRING
     returning
       value(R_RES) type ref to ZTBOX_CL_FIELDESC_DATE .
 protected section.
@@ -119,30 +138,25 @@ protected section.
   data _COUNTRY type LAND1 .
   data _OUTLEN type I .
   data _LABEL type STRING .
-  data _ESCAPATOR type CHAR1 .
-  data _ENCLOSING type CHAR1 .
+  data _ESCAPECHAR type CHAR1 .
+  data _DOUBLEQUOTE type FLAG .
+  data _DELIMITER type CHAR1 .
+  data _QUOTECHAR type CHAR1 .
   data _CONVEXIT type FLAG .
   data _CONDENSE type FLAG .
+  data _QUOTING type I .
   data _ALIGNMENT type I .
   data _KEEP_INIT type FLAG .
   data _INCLUDE type FLAG .
   data _EXCLUDE type FLAG .
   data _DATE_FORMAT_STR type STRING .
   data _TIME_FORMAT_STR type STRING .
-  data _THOUSAND_SEP type CHAR1 .
-  data _DECIMALS_SEP type CHAR1 .
+  data _NUMBER_FORMAT type XUDCPFM .
   data _CSV_POSITION type I .
   data _CONVEXIT_ROUTINE type CONVEXIT .
   data _DECIMALS type I .
+  data _USE_NUMBER_FORMAT type FLAG .
 
-  methods _ADD_POST_VALIDATION
-    importing
-      !METHOD_NAME type SEOCMPNAME
-      !STOP type FLAG optional .
-  methods _ADD_PRE_VALIDATION
-    importing
-      !METHOD_NAME type SEOCMPNAME
-      !STOP type FLAG optional .
   methods _WRITE_TO_STR
     importing
       !VALUE type ANY
@@ -158,31 +172,32 @@ protected section.
   methods OUTPUT
     changing
       !VALUE type STRING .
-private section.
+PRIVATE SECTION.
 
-  types:
+  TYPES:
     BEGIN OF ty_validations,
+      object     TYPE REF TO object,
       validation TYPE seocmpname,
       failed     TYPE flag,
     END OF ty_validations .
-  types:
+  TYPES:
     BEGIN OF ty_transformations,
       order  TYPE i,
       transf TYPE seocmpname,
     END OF ty_transformations .
 
-  data _ELEM type ref to CL_ABAP_ELEMDESCR .
-  data:
+  DATA _elem TYPE REF TO cl_abap_elemdescr .
+  DATA:
     _transformations TYPE TABLE OF ty_transformations WITH DEFAULT KEY .
-  data:
+  DATA:
     _pre_validations TYPE TABLE OF ty_validations WITH KEY validation .
-  data:
+  DATA:
     _post_validations TYPE TABLE OF ty_validations WITH KEY validation .
 
-  methods _SET_LABEL .
-  methods _SET_CHAR_REF .
-  methods _SET_OUTLEN .
-  methods _SET_CONVEXIT_ROUTINE .
+  METHODS _set_label .
+  METHODS _set_char_ref .
+  METHODS _set_outlen .
+  METHODS _set_convexit_routine .
 ENDCLASS.
 
 
@@ -190,9 +205,27 @@ ENDCLASS.
 CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
 
+  METHOD add_post_validation.
+
+    APPEND VALUE #(
+      object      = check_object
+      validation  = check_method ) TO _post_validations.
+
+  ENDMETHOD.
+
+
+  METHOD add_pre_validation.
+
+    APPEND VALUE #(
+      object      = check_object
+      validation  = check_method ) TO _pre_validations.
+
+  ENDMETHOD.
+
+
   METHOD alignment.
 
-    _alignment = i_par.
+    _alignment = alignment.
 
     r_res = me.
 
@@ -213,7 +246,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD CONDENSE.
 
-    _condense = i_par.
+    _condense = condense.
 
     r_res = me.
 
@@ -223,12 +256,19 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
   METHOD config.
 
     convexit( i_config-convexit ).
-    enclosing( i_config-enclosing ).
-    escapator( i_config-escapator ).
+    quotechar( i_config-quotechar ).
+    escapechar( i_config-escapechar ).
     condense( i_config-condense ).
-    keep_init( i_config-keep_initials ).
+    keep_init( i_config-keep_init ).
     alignment( i_config-alignment ).
-    country_format( i_config-country_format ).
+    country( i_config-country ).
+    decimals( i_config-decimals ).
+
+    _delimiter          = i_config-delimiter.
+    _doublequote        = i_config-doublequote.
+    _quoting            = i_config-quoting.
+    _use_number_format  = i_config-use_number_format.
+    _number_format      = i_config-number_format.
 
   ENDMETHOD.
 
@@ -242,7 +282,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD convexit.
 
-    _convexit = i_par.
+    _convexit = convexit.
 
     r_res = me.
 
@@ -271,35 +311,44 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD copy.
 
-    _country          = i_obj->_country.
-    _outlen           = i_obj->_outlen.
-    _label            = i_obj->_label.
-    _escapator        = i_obj->_escapator.
-    _enclosing        = i_obj->_enclosing.
-    _convexit         = i_obj->_convexit.
-    _condense         = i_obj->_condense.
-    _alignment        = i_obj->_alignment.
-    _keep_init        = i_obj->_keep_init.
-    _include          = i_obj->_include.
-    _exclude          = i_obj->_exclude.
-    _date_format_str  = i_obj->_date_format_str.
-    _time_format_str  = i_obj->_time_format_str.
-    _thousand_sep     = i_obj->_thousand_sep.
-    _decimals_sep     = i_obj->_decimals_sep.
-    _decimals         = i_obj->_decimals.
-    _csv_position     = i_obj->_csv_position.
+    _country            = i_obj->_country.
+    _outlen             = i_obj->_outlen.
+    _label              = i_obj->_label.
+    _escapechar         = i_obj->_escapechar.
+    _quotechar          = i_obj->_quotechar.
+    _convexit           = i_obj->_convexit.
+    _condense           = i_obj->_condense.
+    _alignment          = i_obj->_alignment.
+    _keep_init          = i_obj->_keep_init.
+    _include            = i_obj->_include.
+    _exclude            = i_obj->_exclude.
+    _date_format_str    = i_obj->_date_format_str.
+    _time_format_str    = i_obj->_time_format_str.
+    _number_format      = i_obj->_number_format.
+    _decimals           = i_obj->_decimals.
+    _csv_position       = i_obj->_csv_position.
+    _delimiter          = i_obj->_delimiter.
+    _doublequote        = i_obj->_doublequote.
+    _use_number_format  = i_obj->_use_number_format.
+    _quoting            = i_obj->_quoting.
+    _post_validations   = i_obj->_post_validations.
+    _pre_validations    = i_obj->_pre_validations.
 
   ENDMETHOD.
 
 
-  METHOD country_format.
+  METHOD country.
 
-    _country = i_country.
+    _country = country.
+
+    r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD CSV_POSITION.
+  METHOD csv_position.
+
+    CHECK _csv_position IS INITIAL.
 
     _csv_position = i_par.
 
@@ -310,7 +359,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD date_format.
 
-    _date_format_str = i_date_format.
+    _date_format_str = date_format.
 
     r_res = to_date( ).
 
@@ -319,34 +368,25 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD DECIMALS.
 
-    _decimals = i_par.
+    _decimals = decimals.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD enclosing.
+  METHOD escapechar.
 
-    _enclosing = i_par.
-
-    r_res = me.
-
-  ENDMETHOD.
-
-
-  METHOD escapator.
-
-    _escapator = i_par.
+    _escapechar = escapechar.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD EXCLUDE.
+  METHOD exclude.
 
-    _exclude = i_par.
+    _exclude = exclude.
 
     r_res = me.
 
@@ -355,16 +395,16 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD INCLUDE.
 
-    _include = i_par.
+    _include = include.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD KEEP_INIT.
+  METHOD keep_init.
 
-    _keep_init = i_par.
+    _keep_init = keep_init.
 
     r_res = me.
 
@@ -373,9 +413,20 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD LABEL.
 
-    _label = i_par.
+    _label = label.
 
     r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD number_format.
+
+    _use_number_format = abap_true.
+
+    _number_format = number_format.
+
+    r_res = to_numb( ).
 
   ENDMETHOD.
 
@@ -393,9 +444,18 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD OUTPUT_LEN.
+  METHOD output_len.
 
-    _outlen = i_par.
+    _outlen = output_len.
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD QUOTECHAR.
+
+    _quotechar = quotechar.
 
     r_res = me.
 
@@ -406,7 +466,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
     LOOP AT _pre_validations ASSIGNING FIELD-SYMBOL(<pre_val>).
 
-      CALL METHOD (<pre_val>-validation) EXPORTING value = value RECEIVING fail = <pre_val>-failed.
+      CALL METHOD <pre_val>-object->(<pre_val>-validation) EXPORTING value = value RECEIVING fail = <pre_val>-failed.
 
       IF <pre_val>-failed EQ abap_true.
         RAISE EXCEPTION TYPE zcx_tbox_fieldesc
@@ -427,7 +487,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
     LOOP AT _post_validations ASSIGNING FIELD-SYMBOL(<post_val>).
 
-      CALL METHOD (<post_val>-validation) EXPORTING value = output RECEIVING fail = <post_val>-failed.
+      CALL METHOD <post_val>-object->(<post_val>-validation) EXPORTING value = output RECEIVING fail = <post_val>-failed.
 
       IF <post_val>-failed EQ abap_true.
         RAISE EXCEPTION TYPE zcx_tbox_fieldesc
@@ -443,7 +503,7 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD time_format.
 
-    _time_format_str = i_time_format.
+    _time_format_str = time_format.
 
     r_res = to_time( ).
 
@@ -488,32 +548,34 @@ CLASS ZTBOX_CL_FIELDESC IMPLEMENTATION.
 
   METHOD write.
 
-    DATA(val) = _write_to_str( value ).
+    output = _write_to_str( value ).
 
-    ASSIGN _char_ref->* TO FIELD-SYMBOL(<val_c>).
-    CLEAR <val_c>.
+    IF _alignment NE cl_abap_format=>a_left.
 
-    IF value IS NOT INITIAL OR _keep_init EQ abap_true.
-      <val_c> = |{ val WIDTH = _outlen ALIGN = (_alignment) }|.
+      ASSIGN _char_ref->* TO FIELD-SYMBOL(<val_c>).
+
+      CLEAR <val_c>.
+      <val_c> = |{ output WIDTH = _outlen ALIGN = (_alignment) }|.
+
+      output = <val_c>.
+
     ENDIF.
 
-    output = COND #( WHEN _enclosing IS NOT INITIAL THEN |{ _enclosing }{ <val_c> }{ _enclosing }| ELSE <val_c> ).
+    IF _condense EQ abap_true.
+      CONDENSE output.
+    ENDIF.
 
-  ENDMETHOD.
-
-
-  METHOD _add_post_validation.
-
-    APPEND VALUE #(
-      validation  = method_name ) TO _post_validations.
-
-  ENDMETHOD.
-
-
-  METHOD _add_pre_validation.
-
-    APPEND VALUE #(
-      validation  = method_name ) TO _pre_validations.
+*    IF _escapechar IS INITIAL AND _doublequote EQ abap_true AND _quotechar IS NOT INITIAL.
+*      output = replace( val = output occ = 0 sub = _quotechar with = _quotechar && _quotechar ).
+*    ENDIF.
+*
+*    IF _escapechar IS NOT INITIAL AND _quotechar IS NOT INITIAL.
+*      output = replace( val = output occ = 0 sub = _quotechar with = _escapechar && _quotechar ).
+*    ENDIF.
+*
+*    IF _escapechar IS NOT INITIAL AND ( _quotechar IS INITIAL OR _quoting EQ ztbox_cl_csvman=>c_quote_none ).
+*      output = replace( val = output occ = 0 sub = _delimiter with = _escapechar && _delimiter ).
+*    ENDIF.
 
   ENDMETHOD.
 

@@ -28,15 +28,19 @@ CLASS ZTBOX_CL_FIELDESC_CHAR IMPLEMENTATION.
 
   METHOD _write_to_str.
 
-    ASSIGN _char_ref->* TO FIELD-SYMBOL(<val_c>).
+    IF _convexit EQ abap_false.
 
-    CLEAR <val_c>.
-    WRITE value TO <val_c>.
+      output = value.
 
-    output = COND #( WHEN _convexit EQ abap_true THEN <val_c> ELSE value ).
+    ELSE.
 
-    IF _escapator IS NOT INITIAL.
-      REPLACE ALL OCCURRENCES OF _enclosing IN output WITH |{ _escapator }{ _enclosing }|.
+      ASSIGN _char_ref->* TO FIELD-SYMBOL(<val_c>).
+
+      CLEAR <val_c>.
+      WRITE value TO <val_c>.
+
+      output = <val_c>.
+
     ENDIF.
 
   ENDMETHOD.

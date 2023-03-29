@@ -7,7 +7,12 @@ class ZTBOX_CL_FIELDESC_DATE definition
 public section.
 
   methods CONSTRUCTOR .
-  methods VALID_DATE
+  methods DATE_LENGTH
+    importing
+      !VALUE type STRING
+    returning
+      value(FAIL) type FLAG .
+  methods DATE_PLAUSIBILITY
     importing
       !VALUE type STRING
     returning
@@ -33,6 +38,7 @@ private section.
           yy_len TYPE i,
           sep    TYPE c LENGTH 1,
         END OF _date_format .
+  data C_NULL_DATE type CHAR8 value '        ' ##NO_TEXT.
 
   methods WRITE_DATE
     importing
@@ -59,30 +65,62 @@ CLASS ZTBOX_CL_FIELDESC_DATE IMPLEMENTATION.
 
     super->constructor( ).
 
-    _add_post_validation( |VALID_DATE| ).
+    add_pre_validation(
+      check_object  = me
+      check_method  = |DATE_LENGTH| ).
+
+    add_post_validation(
+      check_object  = me
+      check_method  = |DATE_PLAUSIBILITY| ).
 
   ENDMETHOD.
 
 
   METHOD date_format.
 
-    CHECK i_date_format IS NOT INITIAL.
+    CHECK date_format IS NOT INITIAL.
 
-    FIND |dd|   IN i_date_format MATCH OFFSET DATA(d_off)   IGNORING CASE.
-    FIND |mm|   IN i_date_format MATCH OFFSET DATA(m_off)   IGNORING CASE.
-    FIND |yy|   IN i_date_format MATCH OFFSET DATA(y2_off)  IGNORING CASE.
-    FIND |yyyy| IN i_date_format MATCH OFFSET DATA(y4_off)  MATCH COUNT DATA(y4_cnt) IGNORING CASE.
+    FIND |dd|   IN date_format MATCH OFFSET DATA(d_off)   IGNORING CASE.
+    FIND |mm|   IN date_format MATCH OFFSET DATA(m_off)   IGNORING CASE.
+    FIND |yy|   IN date_format MATCH OFFSET DATA(y2_off)  IGNORING CASE.
+    FIND |yyyy| IN date_format MATCH OFFSET DATA(y4_off)  MATCH COUNT DATA(y4_cnt) IGNORING CASE.
 
     DATA(sep_off) = nmin( val1 = d_off val2 = m_off ) + 2.
 
     _date_format = VALUE #(
-      sep     = i_date_format+sep_off(1)
+      sep     = COND #( WHEN to_upper( date_format+sep_off(1) ) CA sy-abcde THEN space ELSE date_format+sep_off(1) )
       dd_off  = d_off
       mm_off  = m_off
       yy_off  = COND #( WHEN y4_cnt > 0 THEN y4_off ELSE y2_off )
       yy_len  = COND #( WHEN y4_cnt > 0 THEN 4 ELSE 2 ) ).
 
     r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD DATE_LENGTH.
+
+    fail = xsdbool( strlen( value ) LE 7 ).
+
+  ENDMETHOD.
+
+
+  METHOD DATE_PLAUSIBILITY.
+
+    DATA date TYPE datum.
+
+    date = value.
+
+    CALL FUNCTION 'DATE_CHECK_PLAUSIBILITY'
+      EXPORTING
+        date                      = date
+      EXCEPTIONS
+        error_message             = -1
+        plausibility_check_failed = 1
+        OTHERS                    = 2.
+
+    fail = xsdbool( sy-subrc NE 0 ).
 
   ENDMETHOD.
 
@@ -115,38 +153,26 @@ CLASS ZTBOX_CL_FIELDESC_DATE IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD valid_date.
-
-    DATA date TYPE datum.
-
-    date = value.
-
-    CALL FUNCTION 'DATE_CHECK_PLAUSIBILITY'
-      EXPORTING
-        date                      = date
-      EXCEPTIONS
-        error_message             = -1
-        plausibility_check_failed = 1
-        OTHERS                    = 2.
-
-    fail = xsdbool( sy-subrc NE 0 ).
-
-  ENDMETHOD.
-
-
   METHOD write_date.
 
     DATA c_date TYPE c LENGTH 10 VALUE '..........'.
 
-    output = |{ value COUNTRY = _country }|.
+    IF _country IS NOT INITIAL.
+      output = |{ value COUNTRY = _country }|.
+      RETURN.
+    ENDIF.
 
     CHECK _date_format IS NOT INITIAL.
 
-    c_date+_date_format-dd_off(2) = value+6(2).
-    c_date+_date_format-mm_off(2) = value+4(2).
-    c_date+_date_format-yy_off(_date_format-yy_len) = COND #( WHEN _date_format-yy_len EQ 4 THEN value(4) ELSE value+2(2) ).
+    DATA(dd) = value+6(2).
+    DATA(mm) = value+4(2).
+    DATA(yy) = COND #( WHEN _date_format-yy_len EQ 4 THEN value(4) ELSE value+2(2) ).
 
-    REPLACE ALL OCCURRENCES OF '.' IN c_date WITH _date_format-sep.
+    c_date = replace( val = c_date off = _date_format-dd_off len = 2 with = dd ).
+    c_date = replace( val = c_date off = _date_format-mm_off len = 2 with = mm ).
+    c_date = replace( val = c_date off = _date_format-yy_off len = _date_format-yy_len with = yy ).
+    c_date = replace( val = c_date occ = 0 sub = ` ` with = '0' ).
+    c_date = replace( val = c_date occ = 0 sub = '.' with = _date_format-sep ).
 
     CLEAR output.
     output = c_date.
@@ -156,7 +182,15 @@ CLASS ZTBOX_CL_FIELDESC_DATE IMPLEMENTATION.
 
   METHOD _write_to_str.
 
-    output = write_date( value ).
+    DATA date TYPE datum.
+
+    date = value.
+
+    IF value EQ c_null_date.
+      CLEAR date.
+    ENDIF.
+
+    output = write_date( date ).
 
   ENDMETHOD.
 ENDCLASS.

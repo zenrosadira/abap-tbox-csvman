@@ -1,43 +1,36 @@
-class ZTBOX_CL_FIELDESC_NUMB definition
-  public
-  inheriting from ZTBOX_CL_FIELDESC
-  final
-  create public .
+CLASS ztbox_cl_fieldesc_numb DEFINITION
+  PUBLIC
+  INHERITING FROM ztbox_cl_fieldesc
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  methods DECIMALS_SEP
-    importing
-      !I_DECIMALS_SEP type CHAR1
-    returning
-      value(R_RES) type ref to ZTBOX_CL_FIELDESC_NUMB .
-  methods THOUSAND_SEP
-    importing
-      !I_THOUSAND_SEP type CHAR1
-    returning
-      value(R_RES) type ref to ZTBOX_CL_FIELDESC_NUMB .
-  methods CONSTRUCTOR .
-  methods VALID_NUMB
-    importing
-      !VALUE type STRING
-    returning
-      value(FAIL) type FLAG .
+    METHODS constructor .
+    METHODS valid_numb
+      IMPORTING
+        !value      TYPE string
+      RETURNING
+        VALUE(fail) TYPE flag .
 
-  methods CONFIG
-    redefinition .
-protected section.
+    METHODS config
+        REDEFINITION .
+  PROTECTED SECTION.
 
-  methods OUTPUT
-    redefinition .
-  methods _WRITE_TO_STR
-    redefinition .
-private section.
+    METHODS output
+        REDEFINITION .
+    METHODS _write_to_str
+        REDEFINITION .
+  PRIVATE SECTION.
 
-  methods WRITE_NUMB
-    importing
-      !VALUE type NUMERIC
-    returning
-      value(OUTPUT) type STRING .
+    DATA _thousand_sep TYPE char1 .
+    DATA _decimals_sep TYPE char1 .
+
+    METHODS write_numb
+      IMPORTING
+        !value        TYPE numeric
+      RETURNING
+        VALUE(output) TYPE string .
 ENDCLASS.
 
 
@@ -49,26 +42,26 @@ CLASS ZTBOX_CL_FIELDESC_NUMB IMPLEMENTATION.
 
     super->config( i_config ).
 
-    thousand_sep( i_config-thousand_sep ).
-    decimals_sep( i_config-decimals_sep ).
+    _thousand_sep = COND #(
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_1 THEN '.'
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_2 THEN ','
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_3 THEN ' ' ).
+
+    _decimals_sep = COND #(
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_1 THEN ','
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_2 THEN '.'
+      WHEN i_config-number_format EQ ztbox_cl_csvman=>c_dec_separator_3 THEN ',' ).
 
   ENDMETHOD.
 
 
-  METHOD CONSTRUCTOR.
+  METHOD constructor.
 
     super->constructor( ).
 
-    _add_post_validation( |VALID_NUMB| ).
-
-  ENDMETHOD.
-
-
-  METHOD DECIMALS_SEP.
-
-    _decimals_sep = i_decimals_sep.
-
-    r_res = me.
+    add_post_validation(
+      check_object  = me
+      check_method  = |VALID_NUMB| ).
 
   ENDMETHOD.
 
@@ -94,15 +87,6 @@ CLASS ZTBOX_CL_FIELDESC_NUMB IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD thousand_sep.
-
-    _thousand_sep = i_thousand_sep.
-
-    r_res = me.
-
-  ENDMETHOD.
-
-
   METHOD valid_numb.
 
     fail = abap_true.
@@ -123,19 +107,19 @@ CLASS ZTBOX_CL_FIELDESC_NUMB IMPLEMENTATION.
 
   METHOD write_numb.
 
-    IF _decimals IS NOT INITIAL.
+    DATA(country) = COND land1(
+      WHEN _use_number_format EQ abap_false THEN _country
+      WHEN _number_format EQ ztbox_cl_csvman=>c_dec_separator_1 THEN 'IT'
+      WHEN _number_format EQ ztbox_cl_csvman=>c_dec_separator_2 THEN 'US'
+      WHEN _number_format EQ ztbox_cl_csvman=>c_dec_separator_3 THEN 'US' ).
 
-      DATA c_num TYPE c LENGTH cl_abap_elemdescr=>type_c_max_length.
-      WRITE value TO c_num DECIMALS _decimals LEFT-JUSTIFIED.
-      output = c_num.
+    output = COND #(
+      WHEN _decimals IS NOT INITIAL THEN |{ value DECIMALS = _decimals COUNTRY = country }|
+      ELSE |{ value COUNTRY = country }| ).
 
-    ELSE.
-
-      output = |{ value COUNTRY = _country }|.
-
+    IF _number_format EQ ztbox_cl_csvman=>c_dec_separator_3.
+      REPLACE ALL OCCURRENCES OF ',' IN output WITH ` `.
     ENDIF.
-
-    CONDENSE output.
 
   ENDMETHOD.
 

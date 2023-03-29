@@ -10,44 +10,57 @@ public section.
         table_field  TYPE name_feld,
         csv_position TYPE i,
         field_obj    TYPE REF TO ztbox_cl_fieldesc,
-        priority     TYPE flag,
+        inactive     TYPE flag,
       END OF ty_catalog .
   types:
     ty_catalog_t TYPE TABLE OF ty_catalog WITH KEY table_field .
   types:
     BEGIN OF ty_validation_fails,
-             row         TYPE i,
-             col         TYPE i,
-             table_field TYPE name_feld,
-             raw_value   TYPE string,
-             sap_value   TYPE string,
-             method_fail TYPE seocmpname,
-           END OF ty_validation_fails .
+        row          TYPE i,
+        col          TYPE i,
+        table_field  TYPE name_feld,
+        raw_value    TYPE string,
+        sap_value    TYPE string,
+        check_failed TYPE seocmpname,
+      END OF ty_validation_fails .
   types:
     ty_validation_fails_t TYPE TABLE OF ty_validation_fails WITH DEFAULT KEY .
   types:
     BEGIN OF ty_field_conf,
-        enclosing      TYPE char1,
-        convexit       TYPE flag,
-        condense       TYPE flag,
-        alignment      TYPE i,
-        keep_initials  TYPE flag,
-        country_format TYPE land1,
-        date_format    TYPE string,
-        time_format    TYPE string,
-        escapator      TYPE char1,
-        thousand_sep   TYPE c LENGTH 1,
-        decimals_sep   TYPE c LENGTH 1,
+        quotechar         TYPE char1,
+        convexit          TYPE flag,
+        condense          TYPE flag,
+        delimiter         TYPE char1,
+        alignment         TYPE i,
+        keep_init         TYPE flag,
+        country           TYPE land1,
+        date_format       TYPE string,
+        time_format       TYPE string,
+        number_format     TYPE xudcpfm,
+        escapechar        TYPE char1,
+        doublequote       TYPE flag,
+        decimals          TYPE i,
+        thousand_sep      TYPE c LENGTH 1,
+        decimals_sep      TYPE c LENGTH 1,
+        quoting           TYPE i,
+        use_number_format TYPE flag,
       END OF ty_field_conf .
   types:
     BEGIN OF ty_config.
         INCLUDE TYPE ty_field_conf.
         TYPES header TYPE flag.
     TYPES header_desc    TYPE flag.
-    TYPES separator      TYPE string.
     TYPES end_of_line    TYPE string.
     TYPES include_only   TYPE flag.
     TYPES: END OF ty_config .
+
+  constants C_DEC_SEPARATOR_3 type XUDCPFM value 'Y' ##NO_TEXT.
+  constants C_DEC_SEPARATOR_2 type XUDCPFM value 'X' ##NO_TEXT.
+  constants C_DEC_SEPARATOR_1 type XUDCPFM value '' ##NO_TEXT.
+  constants C_QUOTE_ALL type I value 3 ##NO_TEXT.
+  constants C_QUOTE_MINIMAL type I value 1 ##NO_TEXT.
+  constants C_QUOTE_NONNUMERIC type I value 2 ##NO_TEXT.
+  constants C_QUOTE_NONE type I value 0 ##NO_TEXT.
 
   class-methods CLASS_CONSTRUCTOR .
   methods READ_CSV
@@ -61,16 +74,14 @@ public section.
     returning
       value(R_CSV) type STRING .
   methods CONSTRUCTOR .
-  class-methods TO_STRING
+  methods TO_STRING
     importing
       !I_TAB type STRING_TABLE
-      !I_EOL type ANY default CL_ABAP_CHAR_UTILITIES=>CR_LF
     returning
       value(R_RES) type STRING .
-  class-methods TO_TABLE_STRING
+  methods TO_TABLE_STRING
     importing
       !I_STR type STRING
-      !I_EOL type ANY default CL_ABAP_CHAR_UTILITIES=>CR_LF
     returning
       value(R_RES) type STRING_TABLE .
   methods FIELD
@@ -81,87 +92,91 @@ public section.
   methods TIME_FORMAT
     importing
       !TIME_FORMAT type STRING
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods DATE_FORMAT
     importing
       !DATE_FORMAT type STRING
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods ESCAPATOR
+  methods ESCAPECHAR
     importing
-      !ESCAPATOR type CHAR1
-      !FOR_FIELD type NAME_FELD optional
+      !ESCAPECHAR type CHAR1
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods ENCLOSING
+  methods QUOTECHAR
     importing
-      !ENCLOSING type CHAR1
-      !FOR_FIELD type NAME_FELD optional
+      !QUOTECHAR type CHAR1
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods END_OF_LINE
     importing
-      !I_PAR type STRING
+      !EOF type CLIKE
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods ALIGNMENT
     importing
       !ALIGNMENT type I
-      !FOR_FIELD type NAME_FELD optional
-    returning
-      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods THOUSAND_SEP
-    importing
-      !THOUSAND_SEP type CHAR1
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods CONVEXIT
     importing
       !CONVEXIT type FLAG
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods CONDENSE
     importing
       !CONDENSE type FLAG
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods KEEP_INIT
     importing
       !KEEP_INIT type FLAG
-      !FOR_FIELD type NAME_FELD optional
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods DECIMALS_SEP
-    importing
-      !DECIMALS_SEP type CHAR1
-      !FOR_FIELD type NAME_FELD optional
-    returning
-      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods COUNTRY_FORMAT
+  methods COUNTRY
     importing
       !COUNTRY type LAND1
-      value(FOR_FIELD) type NAME_FELD
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
-  methods SEPARATOR
+  methods INCLUDE_ONLY
     importing
-      !I_PAR type STRING
+      !INCLUDE_ONLY type FLAG
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
+  methods QUOTING
+    importing
+      !QUOTING type I
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
+  methods DOUBLEQUOTE
+    importing
+      !DOUBLEQUOTE type FLAG
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
+  methods NUMBER_FORMAT
+    importing
+      !NUMBER_FORMAT type XUDCPFM
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
+  methods DECIMALS
+    importing
+      !DECIMALS type I
+    returning
+      value(R_RES) type ref to ZTBOX_CL_CSVMAN .
+  methods DELIMITER
+    importing
+      !DELIMITER type STRING
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods HEADER_DESC
     importing
-      !I_PAR type FLAG
+      !HEADER_DESC type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods HEADER
     importing
-      !I_PAR type FLAG
+      !HEADER type FLAG
     returning
       value(R_RES) type ref to ZTBOX_CL_CSVMAN .
   methods GET_VALIDATION_FAILS
@@ -192,11 +207,6 @@ private section.
   data _VALIDATION_FAILS type TY_VALIDATION_FAILS_T .
   data _CURRENT_ROW type I .
 
-  methods _LINE_TO_CSV
-    importing
-      !IS_LINE type ANY
-    returning
-      value(R_CSV) type STRING .
   methods _CSV_TO_LINE
     importing
       !IV_CSV type STRING .
@@ -214,10 +224,6 @@ private section.
       !I_LINE type STRING
     returning
       value(R_VALUES) type TY_VALUES_T .
-  methods _ASSIGN_ATTRIBUTE
-    importing
-      !I_ATTRIBUTE type STRING
-      !I_VALUE type ANY .
   methods _CREATE_CATALOG
     importing
       !IT_TABLE type ANY TABLE .
@@ -226,6 +232,19 @@ private section.
       !IT_TABLE type ANY TABLE
     returning
       value(R_LINE) type ref to CL_ABAP_STRUCTDESCR .
+  methods _PARSE_VALUES
+    importing
+      !I_VALUES type STRING_TABLE
+    returning
+      value(R_VALUES) type STRING_TABLE .
+  methods _APPLY_QUOTINGS
+    importing
+      !I_CAT type TY_CATALOG
+    changing
+      !C_VALUE type STRING .
+  methods _APPLY_ESCAPINGS
+    changing
+      !C_VALUE type STRING .
 ENDCLASS.
 
 
@@ -233,11 +252,9 @@ ENDCLASS.
 CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
 
-  METHOD ALIGNMENT.
+  METHOD alignment.
 
-    _assign_attribute(
-      i_attribute = |ALIGNMENT|
-      i_value     = alignment ).
+    _configuration-alignment = alignment.
 
     r_res = me.
 
@@ -251,11 +268,9 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD CONDENSE.
+  METHOD condense.
 
-    _assign_attribute(
-      i_attribute = |CONDENSE|
-      i_value     = condense ).
+    _configuration-condense = condense.
 
     r_res = me.
 
@@ -265,34 +280,30 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   METHOD constructor.
 
     header( abap_true ).
-    separator( CONV #( cl_abap_char_utilities=>horizontal_tab ) ).
+    delimiter( |,| ).
+    end_of_line( cl_abap_char_utilities=>cr_lf ).
     alignment( cl_abap_format=>a_left ).
     convexit( abap_true ).
-    end_of_line( CONV #( cl_abap_char_utilities=>cr_lf ) ).
-    date_format( |gg.mm.yyyy| ).
+    date_format( |dd.mm.yyyy| ).
     time_format( |hh:mm:ss| ).
-    thousand_sep( |.| ).
-    decimals_sep( |,| ).
+    quoting( c_quote_none ).
+    keep_init( abap_true ).
 
   ENDMETHOD.
 
 
-  METHOD CONVEXIT.
+  METHOD convexit.
 
-    _assign_attribute(
-      i_attribute = |CONVEXIT|
-      i_value     = convexit ).
+    _configuration-convexit = convexit.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD country_format.
+  METHOD COUNTRY.
 
-    _assign_attribute(
-      i_attribute = |COUNTRY_FORMAT|
-      i_value     = country ).
+    _configuration-country = country.
 
     r_res = me.
 
@@ -301,70 +312,105 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
   METHOD create_csv.
 
+    DATA(val) = VALUE string( ).
+
     _create_catalog( it_table ).
 
-    IF _configuration-header EQ abap_true.
-      r_csv = |{ _get_header( ) }{ _configuration-end_of_line }|.
-    ENDIF.
+    DATA(tab_lines) = lines( it_table ).
+    DATA(cat_lines) = lines( _catalog ).
 
     LOOP AT it_table ASSIGNING FIELD-SYMBOL(<line>).
+      DATA(tab_ix) = sy-tabix.
 
-      DATA(eof) = COND #( WHEN sy-tabix NE lines( it_table ) THEN _configuration-end_of_line ELSE space ).
+      LOOP AT _catalog INTO DATA(cat).
+        DATA(cat_ix) = sy-tabix.
 
-      r_csv = |{ r_csv }{ _line_to_csv( <line> ) }{ eof }|.
+        CLEAR val.
+        ASSIGN COMPONENT cat-table_field OF STRUCTURE <line> TO FIELD-SYMBOL(<val>).
+
+        IF <val> IS NOT INITIAL OR _configuration-keep_init EQ abap_true.
+
+          val = cat-field_obj->write( <val> ).
+
+        ENDIF.
+
+        _apply_escapings(
+          CHANGING  c_value = val ).
+
+        _apply_quotings(
+          EXPORTING i_cat   = cat
+          CHANGING  c_value = val ).
+
+        r_csv = r_csv && val.
+
+        IF cat_ix NE cat_lines.
+          r_csv = r_csv && _configuration-delimiter.
+        ENDIF.
+
+      ENDLOOP.
+
+      IF tab_ix NE tab_lines.
+        r_csv = r_csv && _configuration-end_of_line.
+      ENDIF.
 
     ENDLOOP.
+
+    IF _configuration-header EQ abap_true.
+      DATA(header) = _get_header( ).
+      r_csv = header && _configuration-end_of_line && r_csv.
+    ENDIF.
 
   ENDMETHOD.
 
 
   METHOD date_format.
 
-    _assign_attribute(
-      i_attribute = |DATE_FORMAT|
-      i_value     = date_format ).
+    _configuration-date_format = date_format.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD DECIMALS_SEP.
+  METHOD DECIMALS.
 
-    _assign_attribute(
-      i_attribute = |DECIMALS_SEP|
-      i_value     = decimals_sep ).
+    _configuration-decimals = decimals.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD enclosing.
+  METHOD DELIMITER.
 
-    _assign_attribute(
-      i_attribute = |ENCLOSING|
-      i_value     = enclosing ).
+    _configuration-delimiter = delimiter.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD END_OF_LINE.
+  METHOD DOUBLEQUOTE.
 
-    _configuration-end_of_line = i_par.
+    _configuration-doublequote = doublequote.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD escapator.
+  METHOD end_of_line.
 
-    _assign_attribute(
-      i_attribute = |ESCAPATOR|
-      i_value     = CONV #( escapator ) ).
+    _configuration-end_of_line = eof.
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD ESCAPECHAR.
+
+    _configuration-escapechar = escapechar.
 
     r_res = me.
 
@@ -399,27 +445,64 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
   METHOD header.
 
-    _configuration-header = i_par.
+    _configuration-header = header.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD HEADER_DESC.
+  METHOD header_desc.
 
-    _configuration-header_desc = i_par.
+    _configuration-header_desc = header_desc.
 
     r_res = me.
 
   ENDMETHOD.
 
 
-  METHOD KEEP_INIT.
+  METHOD include_only.
 
-    _assign_attribute(
-      i_attribute = |KEEP_INITIAL|
-      i_value     = keep_init ).
+    _configuration-include_only = include_only.
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD keep_init.
+
+    _configuration-keep_init = keep_init.
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD number_format.
+
+    _configuration-number_format      = number_format.
+    _configuration-use_number_format  = abap_true.
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD quotechar.
+
+    _configuration-quotechar = quotechar.
+
+    quoting( c_quote_all ).
+
+    r_res = me.
+
+  ENDMETHOD.
+
+
+  METHOD QUOTING.
+
+    _configuration-quoting = quoting.
 
     r_res = me.
 
@@ -434,6 +517,7 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
     _create_catalog( ct_table ).
 
+    CLEAR _current_row.
     LOOP AT it_csv INTO DATA(csv).
 
       _current_row = sy-tabix.
@@ -447,31 +531,9 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD separator.
-
-    _configuration-separator = i_par.
-
-    r_res = me.
-
-  ENDMETHOD.
-
-
-  METHOD THOUSAND_SEP.
-
-    _assign_attribute(
-      i_attribute = |THOUSAND_SEP|
-      i_value     = thousand_sep ).
-
-    r_res = me.
-
-  ENDMETHOD.
-
-
   METHOD time_format.
 
-    _assign_attribute(
-      i_attribute = |TIME_FORMAT|
-      i_value     = time_format ).
+    _configuration-time_format = time_format.
 
     r_res = me.
 
@@ -482,7 +544,7 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
     LOOP AT i_tab INTO DATA(row).
 
-      r_res = COND #( WHEN sy-tabix EQ 1 THEN row ELSE |{ r_res }{ i_eol }{ row }| ).
+      r_res = COND #( WHEN sy-tabix EQ 1 THEN row ELSE r_res && _configuration-end_of_line && row ).
 
     ENDLOOP.
 
@@ -492,16 +554,74 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   METHOD to_table_string.
 
     CLEAR r_res.
-    SPLIT i_str AT i_eol INTO TABLE r_res.
+    IF _configuration-escapechar IS INITIAL OR find( val = i_str sub = _configuration-escapechar && _configuration-end_of_line ) = -1.
+
+      SPLIT i_str AT _configuration-end_of_line INTO TABLE r_res.
+
+    ELSE.
+
+      TRY.
+          DATA(guid) = cl_system_uuid=>create_uuid_c22_static( ).
+        CATCH cx_uuid_error.
+          RETURN.
+      ENDTRY.
+
+      DATA(str) = replace( val = i_str occ = 0 sub = _configuration-escapechar && _configuration-end_of_line with = guid ).
+
+      SPLIT str AT _configuration-end_of_line INTO TABLE r_res.
+
+      REPLACE ALL OCCURRENCES OF guid IN TABLE r_res WITH _configuration-escapechar && _configuration-end_of_line.
+
+    ENDIF.
 
   ENDMETHOD.
 
 
-  METHOD _assign_attribute.
+  METHOD _apply_escapings.
 
-    ASSIGN COMPONENT i_attribute OF STRUCTURE _configuration TO FIELD-SYMBOL(<val>).
-    CHECK <val> IS ASSIGNED.
-    <val> = i_value.
+    IF _configuration-escapechar IS INITIAL AND _configuration-doublequote EQ abap_true AND _configuration-quotechar IS NOT INITIAL.
+      c_value = replace( val = c_value occ = 0 sub = _configuration-quotechar with = _configuration-quotechar && _configuration-quotechar ).
+    ENDIF.
+
+    IF _configuration-escapechar IS NOT INITIAL AND _configuration-quotechar IS NOT INITIAL.
+      c_value = replace( val = c_value occ = 0 sub = _configuration-quotechar with = _configuration-escapechar && _configuration-quotechar ).
+    ENDIF.
+
+    IF _configuration-escapechar IS NOT INITIAL AND ( _configuration-quotechar IS INITIAL OR _configuration-quoting EQ ztbox_cl_csvman=>c_quote_none ).
+      c_value = replace( val = c_value occ = 0 sub = _configuration-delimiter with = _configuration-escapechar && _configuration-delimiter ).
+    ENDIF.
+
+    IF _configuration-escapechar IS NOT INITIAL.
+      c_value = replace( val = c_value occ = 0 sub = _configuration-end_of_line with = _configuration-escapechar && _configuration-end_of_line ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD _apply_quotings.
+
+    CASE _configuration-quoting.
+
+      WHEN c_quote_all.
+        c_value =  _configuration-quotechar && c_value && _configuration-quotechar.
+
+      WHEN c_quote_minimal.
+
+        IF      find( val = c_value sub = _configuration-delimiter ) GE 0
+          OR    find( val = c_value sub = _configuration-end_of_line ) GE 0
+          OR  ( _configuration-quotechar IS NOT INITIAL AND find( val = c_value sub = _configuration-quotechar ) GE 0 ).
+
+          c_value = _configuration-quotechar && c_value && _configuration-quotechar.
+
+        ENDIF.
+
+      WHEN c_quote_nonnumeric.
+
+        IF i_cat-field_obj IS NOT INSTANCE OF ztbox_cl_fieldesc_numb.
+          c_value = _configuration-quotechar && c_value && _configuration-quotechar.
+        ENDIF.
+
+    ENDCASE.
 
   ENDMETHOD.
 
@@ -534,51 +654,64 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
       IF sy-subrc EQ 0.
 
         field_obj->copy( <cat>-field_obj ).
-        <cat>-field_obj = field_obj.
-        <cat>-field_obj->assign_element( elem ).
-        <cat>-csv_position  = COND #( WHEN <cat>-field_obj->_csv_position IS NOT INITIAL THEN <cat>-field_obj->_csv_position ELSE ix ).
-        <cat>-priority      = COND #( WHEN <cat>-field_obj->_csv_position IS NOT INITIAL THEN abap_true ELSE abap_false ).
+        field_obj->assign_element( elem ).
+        field_obj->csv_position( ix ).
+        IF field_obj->_include EQ abap_true.
+          include_only( abap_true ).
+        ENDIF.
+
+        <cat>-field_obj     = field_obj.
+        <cat>-csv_position  = field_obj->_csv_position.
+
+        <cat>-inactive      = COND #(
+          WHEN  <cat>-field_obj->_exclude EQ abap_true OR
+              ( <cat>-field_obj->_include EQ abap_false AND _configuration-include_only EQ abap_true )
+          THEN abap_true
+          ELSE abap_false ).
 
       ELSE.
 
         APPEND VALUE #(
           table_field   = comp-name
-          csv_position  = ix
+          inactive      = COND #( WHEN _configuration-include_only EQ abap_true THEN abap_true ELSE abap_false )
           field_obj     = field_obj ) TO _catalog.
 
       ENDIF.
 
     ENDLOOP.
 
-    SORT _catalog BY csv_position.
+    DELETE _catalog WHERE inactive EQ abap_true.
 
-    CLEAR ix.
-    LOOP AT _catalog ASSIGNING <cat> WHERE priority IS INITIAL.
-      ADD 1 TO ix.
-      <cat>-csv_position = ix.
+    DATA jx TYPE i VALUE 1.
+    LOOP AT _catalog ASSIGNING <cat> WHERE csv_position IS INITIAL.
+      DO.
+        IF NOT line_exists( _catalog[ csv_position = jx ] ).
+          EXIT.
+        ELSE.
+          ADD 1 TO jx.
+        ENDIF.
+      ENDDO.
+
+      <cat>-csv_position = jx.
     ENDLOOP.
 
-    SORT _catalog BY csv_position ASCENDING priority DESCENDING.
+    SORT _catalog BY csv_position.
 
   ENDMETHOD.
 
 
   METHOD _csv_to_line.
 
-    DATA line_ref TYPE REF TO data.
+    FIELD-SYMBOLS <tab>   TYPE ANY TABLE.
+    ASSIGN _table_ref->*  TO <tab>.
 
-    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
-    ASSIGN _table_ref->* TO <tab>.
-
-    CREATE DATA line_ref LIKE LINE OF <tab>.
-    ASSIGN line_ref->* TO FIELD-SYMBOL(<row>).
+    DATA line_ref         TYPE REF TO data.
+    CREATE DATA line_ref  LIKE LINE OF <tab>.
+    ASSIGN line_ref->*    TO FIELD-SYMBOL(<row>).
 
     DATA(values) = _get_values( iv_csv ).
 
     LOOP AT _catalog INTO DATA(cat).
-
-      CHECK cat-field_obj->_exclude EQ abap_false.
-      CHECK cat-field_obj->_include EQ abap_true OR _configuration-include_only EQ abap_false.
 
       ASSIGN COMPONENT cat-table_field OF STRUCTURE <row> TO FIELD-SYMBOL(<val>).
       CHECK sy-subrc EQ 0.
@@ -586,15 +719,19 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
       DATA(val_str) = VALUE #( values[ name = cat-table_field ]-raw_data OPTIONAL ).
 
       TRY.
+
           <val> = cat-field_obj->read( val_str ).
+
         CATCH zcx_tbox_fieldesc INTO DATA(x_field).
+
           APPEND VALUE #(
-            row         = _current_row
-            col         = cat-csv_position
-            table_field = cat-table_field
-            raw_value   = val_str
-            sap_value   = x_field->sap_value
-            method_fail = x_field->method ) TO _validation_fails.
+            row           = _current_row
+            col           = cat-csv_position
+            table_field   = cat-table_field
+            raw_value     = val_str
+            sap_value     = x_field->sap_value
+            check_failed  = x_field->method ) TO _validation_fails.
+
       ENDTRY.
 
     ENDLOOP.
@@ -608,23 +745,20 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
     LOOP AT _catalog INTO DATA(cat).
 
-      CHECK cat-field_obj->_exclude EQ abap_false.
-      CHECK cat-field_obj->_include EQ abap_true OR _configuration-include_only EQ abap_false.
-
       DATA(header_txt) = COND #(
         WHEN _configuration-header_desc EQ abap_true AND cat-field_obj->_label IS NOT INITIAL
           THEN cat-field_obj->_label
         ELSE cat-table_field ).
 
       DATA(val) = COND string(
-        WHEN _configuration-enclosing IS INITIAL
+        WHEN _configuration-quotechar IS INITIAL
           THEN header_txt
-          ELSE |{ _configuration-enclosing }{ header_txt }{ _configuration-enclosing }| ).
+          ELSE |{ _configuration-quotechar }{ header_txt }{ _configuration-quotechar }| ).
 
       r_header = COND #(
         WHEN r_header IS INITIAL
           THEN val
-        ELSE |{ r_header }{ _configuration-separator }{ val }| ).
+        ELSE |{ r_header }{ _configuration-delimiter }{ val }| ).
 
     ENDLOOP.
 
@@ -667,76 +801,78 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD _line_to_csv.
+  METHOD _parse_line.
 
-    LOOP AT _catalog INTO DATA(cat).
+    DATA(line) = VALUE string( ).
+    line = i_line.
 
-      CHECK cat-field_obj->_exclude EQ abap_false.
-      CHECK cat-field_obj->_include EQ abap_true OR _configuration-include_only EQ abap_false.
+    IF _configuration-escapechar IS NOT INITIAL AND find( val = line sub = _configuration-escapechar && _configuration-delimiter ) GE 0.
 
-      ASSIGN COMPONENT cat-table_field OF STRUCTURE is_line TO FIELD-SYMBOL(<val>).
-      CHECK sy-subrc EQ 0.
+      TRY.
+          DATA(guid) = cl_system_uuid=>create_uuid_c22_static( ).
+        CATCH cx_uuid_error.
+          RETURN.
+      ENDTRY.
 
-      DATA(val) = cat-field_obj->write( <val> ).
+      line = replace( val = line occ = 0 sub = _configuration-escapechar && _configuration-delimiter with = guid ).
 
-      r_csv = COND #(
-        WHEN r_csv IS INITIAL
-          THEN val
-        ELSE |{ r_csv }{ _configuration-separator }{ val }| ).
+    ENDIF.
 
-    ENDLOOP.
+    SPLIT line AT _configuration-delimiter INTO TABLE DATA(values).
+    r_values = _parse_values( values ).
+
+    IF _configuration-escapechar IS NOT INITIAL.
+      REPLACE ALL OCCURRENCES OF guid IN TABLE r_values WITH _configuration-delimiter.
+    ENDIF.
 
   ENDMETHOD.
 
 
-  METHOD _parse_line.
+  METHOD _parse_values.
 
-    DATA tot_enc TYPE i.
-
-    DATA(line)          = i_line.
-    DATA(combine)       = abap_false.
-    DATA(val_combined)  = VALUE string( ).
-
-    IF _configuration-escapator IS NOT INITIAL.
-      REPLACE ALL OCCURRENCES OF _configuration-escapator IN line WITH _configuration-enclosing.
-    ENDIF.
-
-    SPLIT line AT _configuration-separator INTO TABLE DATA(values).
-
-    IF _configuration-enclosing IS INITIAL.
-      r_values = values.
+    IF lines( i_values ) EQ 1.
+      r_values = i_values.
       RETURN.
     ENDIF.
 
-    FIELD-SYMBOLS <val> TYPE string.
+    DATA tot_enc TYPE i.
+    DATA(combine)       = abap_false.
+    DATA(val_combined)  = VALUE string( ).
+    DATA(values)        = VALUE string_table( ).
+
+    values = i_values.
 
     LOOP AT values INTO DATA(value).
 
-      FIND ALL OCCURRENCES OF _configuration-enclosing IN value MATCH COUNT DATA(c_enc).
-      tot_enc = tot_enc + c_enc.
+      IF _configuration-escapechar IS NOT INITIAL.
+        FIND ALL OCCURRENCES OF |{ _configuration-escapechar }{ _configuration-quotechar }| IN value MATCH COUNT DATA(c_esc).
+      ENDIF.
+      IF _configuration-quotechar IS NOT INITIAL.
+        FIND ALL OCCURRENCES OF _configuration-quotechar IN value MATCH COUNT DATA(c_enc).
+      ENDIF.
+      tot_enc = tot_enc + c_enc - c_esc.
 
       CASE tot_enc MOD 2.
 
         WHEN 0.
           IF combine EQ abap_true.
-            val_combined = |{ val_combined }{ _configuration-separator }{ value }|.
+            val_combined = val_combined && _configuration-delimiter && value.
             value = val_combined.
           ENDIF.
 
-          IF _configuration-escapator IS NOT INITIAL.
-            REPLACE ALL OCCURRENCES OF |{ _configuration-escapator }{ _configuration-enclosing }| IN value WITH _configuration-enclosing.
-          ENDIF.
-
-          REPLACE FIRST OCCURRENCE OF _configuration-enclosing IN value WITH space.
-
           IF value IS NOT INITIAL.
 
-            DATA(val_last) = substring( val = value off = strlen( value ) - 1 len = 1 ).
+            DATA(val_first) = value(1).
+            DATA(val_last)  = substring( val = value off = strlen( value ) - 1 len = 1 ).
 
-            IF val_last EQ _configuration-enclosing.
-              value = substring( val = value off = 0 len = strlen( value ) - 1 ).
+            IF val_last EQ _configuration-quotechar AND val_first EQ _configuration-quotechar.
+              value = substring( val = value off = 1 len = strlen( value ) - 2 ).
             ENDIF.
 
+          ENDIF.
+
+          IF _configuration-escapechar IS NOT INITIAL.
+            value = replace( val = value occ = 0 sub = _configuration-escapechar && _configuration-quotechar with = _configuration-quotechar ).
           ENDIF.
 
           APPEND value TO r_values.
@@ -744,7 +880,7 @@ CLASS ZTBOX_CL_CSVMAN IMPLEMENTATION.
 
         WHEN OTHERS.
           combine = abap_true.
-          val_combined = COND #( WHEN val_combined IS INITIAL THEN value ELSE |{ val_combined }{ _configuration-separator }{ value }| ).
+          val_combined = COND #( WHEN val_combined IS INITIAL THEN value ELSE val_combined && _configuration-delimiter && value ).
 
       ENDCASE.
 
