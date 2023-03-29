@@ -121,9 +121,9 @@ into a table with structure `DATE [D(8)] | TIME [T(6)] | AMOUNT [P(7) DEC(2)]`. 
 And the `get_validation_fails( )` output is this table:
 | ROW  | COL | TABLE_FIELD | RAW_VALUE | SAP_VALUE | CHECK_FAILED |
 | ------- | ------- | ------- | ------- | ------- | ------- |
-| 1 | 1 | DATE | 31/02/2023 | | DATE_PLAUSIBILITY |
-| 2 | 2 | TIME | 25:00:00 | | TIME_PLAUSIBILITY |
-| 3 | 3 | AMOUNT | 12A4,43 | | VALID_NUMB |
+| 1 | 1 | DATE | 31/02/2023 | 20230231 | DATE_PLAUSIBILITY |
+| 2 | 2 | TIME | 25:00:00 | 250000 | TIME_PLAUSIBILITY |
+| 3 | 3 | AMOUNT | 12A4,43 | 12A4.43 | VALID_NUMB |
 
 You can add also custom validation checks: it must be an instance method with the following signature
 
