@@ -21,17 +21,17 @@
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
 
 :mage: Sure, you can use these configurations:
-- ``csv_man->date_format( `yyyy/dd/mm` ).`` *to decide output format for date fields in write mode, or to declare expected format for date fields in read mode. You can use any format containing "dd", "mm", "yy", "yyyy" and an optional separator.*
-- ``csv_man->time_format( `hh:mm:ss` ).`` *same as above, but for time fields.*
+- ``csv_man->date_format( `yyyy/dd/mm` ).`` *to decide output format for date fields in write mode, or to declare expected format for date fields in read mode. You can use any format containing "dd", "mm", "yy", "yyyy" and an optional separator. Default is * `dd.mm.yyyy`.
+- ``csv_man->time_format( `hh:mm:ss` ).`` *same as above, but for time fields. Default is * `hh:mm:ss`.
 - `csv_man->number_format( ).` *three options here:*
   - ` ` *(blank) to output numbers like* `1.234.567,89`
   - `X` *to output numbers like* `1,234,567.89`
   - `Y` *to output numbers like* `1 234 567,89`
 - ``csv_man->country( `US` ).`` *to output date, time and numbers according to a country rules (less specific than previous methods).*
 - `csv_man->decimals( 3 ).` *to write numerical fields with the specified decimals precision.*
-- `csv_man->convexit( abap_true ).` *to apply domain conversion exit, internal-to-external in write mode, external-to-internal in read mode.*
-- `csv_man->condense( abap_true ).` *to remove leading and trailing spaces.*
-- `csv_man->keep_init( abap_true ).` *to maintain initial values: if set to* `abap_false` *a numerical field containing only 0, as well as an initial date or initial time, became blank in write mode. Default option is* `abap_true`.
+- `csv_man->convexit( abap_true ).` *to apply domain conversion exit, internal-to-external in write mode, external-to-internal in read mode. Default is * `abap_true`.
+- `csv_man->condense( abap_true ).` *to remove leading and trailing spaces. Default is * `abap_false`.
+- `csv_man->keep_init( abap_true ).` *to maintain initial values: if set to* `abap_false` *a numerical field containing only 0, as well as an initial date or initial time, became blank in write mode. Default is* `abap_true`.
 - `csv_man->alignment( cl_abap_format=>a_right ).` *to align fields content according to the following options:*
   - `cl_abap_format=>a_left` *to justify text on the left (default option);*
   - `cl_abap_format=>a_right` *to justify text on the right.*
