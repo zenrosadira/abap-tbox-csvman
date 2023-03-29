@@ -108,3 +108,9 @@ And the `get_validation_fails( )` output is this table:
 | 1 | 1 | DATE | 31/02/2023 | | DATE_PLAUSIBILITY |
 | 2 | 2 | TIME | 25:00:00 | | TIME_PLAUSIBILITY |
 | 3 | 3 | AMOUNT | 12A4,43 | | VALID_NUMB |
+
+You can add also validation check: it must be an instance method with the following signature
+
+```abap
+METHODS sample_check IMPORTING value TYPE string RETURNING VALUE(fail) TYPE flag.
+```
