@@ -1,6 +1,6 @@
 # ABAP CSV Manager
 
-![Example](CSV_Example.png)
+![Example](https://i.ibb.co/9N6MN7J/CSV-Example.png)
 
 ## Quick Start
 
