@@ -39,7 +39,7 @@
   - `cl_abap_format=>a_right` *to justify text on the right.*
 
 ## Fields Properties
-:office_worker: **Ok cool. These are global configuration, valid for all the fields, aren't they? What if I want to set some format property to one field and a different property to another?.**
+:office_worker: **Ok cool. These are global configuration, valid for all the fields, aren't they? What if I want to set some format property to one field and a different property to another?**
 
 :mage: You can restrict the application of the previous methods to a single field by calling `field( )` method first, also chaining other methods, e.g.:
 
