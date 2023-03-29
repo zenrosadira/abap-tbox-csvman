@@ -81,7 +81,7 @@ US02,BBBB02
 
 :office_worker: **Useful. Regarding reading the csv, is there an automatism to help identify errors in the data?**
 
-:mage: We have it. When a CSV is read, some validation checks are performed according to the data type of the target fields: date fields (if not initial) must be a valid and plausible date; time fields (if not initial) must contain a valid and plausible time, numerical fields (if not initial) must contain a valid number. Whenever any of these check fail, the contents are not transferred. You get a detailed report for the validation fails by calling `get_validations_fails( )`.
+:mage: We have it. When a CSV is read, some validation checks are performed according to the data type of the target fields: date fields (if not blank) must be a valid and plausible date; time fields (if not blank) must contain a valid and plausible time, numerical fields (if not blank) must contain a valid number. Whenever any of these check fail, the contents are not transferred. You get a detailed report for the validation fails by calling `get_validations_fails( )`.
 
 Suppose you read this CSV:
 
