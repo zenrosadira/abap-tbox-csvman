@@ -16,7 +16,7 @@
   - `ztbox_cl_csvman=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields;*
   - `ztbox_cl_csvman=>c_quote_none` *to never quote fields (this is the default behaviour if no quotechar is set).*
 - `csv_man->header( abap_true ).` *to write/expect an header line in write/read mode.*
-- `csv_man->header_desc( abap_true ).` *to use long label description (from data element, in the log-on language) as header text field. If the field is not typed with a dictionary data element its name is still used as its description*
+- `csv_man->header_desc( abap_true ).` *to use long label description (from data element, in the log-on language) as header text field. If the field is not typed with a dictionary data element its name is still used as description.*
 
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
 
