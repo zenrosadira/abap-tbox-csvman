@@ -2,6 +2,17 @@
 
 ![Example](CSV_Example.png)
 
+## Quick Start
+
+```abap
+DATA(csv_man) = NEW ztbox_cl_csvman( ). " First, create an instance
+DATA(csv_str) = csv_man->create_csv( t_table_data ). " Now you can transform an internal table into a CSV string
+DATA(csv_tab) = csv_man->to_table_string( csv_str ). " csv_str is a string, you can transform it into a table of strings
+
+* To read a CSV file (imported as a table of strings):
+csv_man->read_csv( EXPORTING it_csv = csv_file CHANGING ct_table = t_table_data ).
+```
+
 ## General Configuration
 :office_worker: **Can I decide which character to use as delimiter, quotechar, and line terminator? And what about escaping special characters?**
 
