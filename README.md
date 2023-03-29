@@ -118,8 +118,8 @@ If, e.g., an object `sample_object` implements method `sample_check`, you can ad
 
 ```abap
 csv_man->field( `FIELD_NAME` )->add_post_validation(
-  object      = sample_object
-  method_name = `SAMPLE_CHECK` ).
+  check_object  = sample_object
+  check_method  = `SAMPLE_CHECK` ).
 ```
 
 in two ways: as a *pre validation* by calling method `add_pre_validation( )`, and as a *post validation* by calling method `add_post_validation( )`.
