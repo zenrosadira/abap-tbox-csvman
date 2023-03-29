@@ -2,6 +2,7 @@
 
 ![Example](CSV_Example.png)
 
+## General Configuration
 :office_worker: **Can I decide which character to use as delimiter, quotechar, and line terminator? And what about escaping special characters?**
 
 :mage: Once instantiated you can configure the csv management object:
@@ -18,6 +19,7 @@
 - `csv_man->header( abap_true ).` *to write/expect an header line in write/read mode.*
 - `csv_man->header_desc( abap_true ).` *to use long label description (from data element, in the log-on language) as header text field. If the field is not typed with a dictionary data element its name is still used as description.*
 
+## Output Format
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
 
 :mage: Sure, you can use these configurations:
@@ -36,6 +38,7 @@
   - `cl_abap_format=>a_left` *to justify text on the left (default option);*
   - `cl_abap_format=>a_right` *to justify text on the right.*
 
+## Fields Properties
 :office_worker: **Ok cool. These are global configuration, valid for all the fields, aren't they? What if I want to set some format property to one field and a different property to another?.**
 
 :mage: You can restrict the application of the previous methods to a single field by calling `field( )` method first, also chaining other methods, e.g.:
@@ -79,6 +82,7 @@ US02,BBBB02
 
 `label( )` method set a custom header text when `header_desc( )` is used.
 
+## Validations
 :office_worker: **Useful. Regarding reading the csv, is there an automatism to help identify errors in the data?**
 
 :mage: We have it. When a CSV is read, some validation checks are performed according to the data type of the target fields: date fields (if not blank) must be a valid and plausible date; time fields (if not blank) must contain a valid and plausible time, numerical fields (if not blank) must contain a valid number. Whenever any of these check fail, the contents are not transferred. You get a detailed report for the validation fails by calling `get_validations_fails( )`.
