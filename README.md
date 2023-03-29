@@ -125,5 +125,5 @@ csv_man->field( `FIELD_NAME` )->add_post_validation(
 in two ways: as a *pre validation* by calling method `add_pre_validation( )`, and as a *post validation* by calling method `add_post_validation( )`.
 - Pre-validation checks are applied to raw data: parameter `value` is a string containing exactly the content of the field in the CSV;
 - Post-validation checks are applied to transformed data: parameter `value` is a string containing the field value interally formatted for the SAP data type field target.
-- 
+
 Returning `fail` parameter is a flag: if `abap_true` then the check has not been passed.
