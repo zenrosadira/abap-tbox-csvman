@@ -126,4 +126,4 @@ in two ways: as a *pre validation* by calling method `add_pre_validation( )`, an
 - Pre-validation checks are applied to raw data: parameter `value` is a string containing exactly the content of the field in the CSV;
 - Post-validation checks are applied to transformed data: parameter `value` is a string containing the field value interally formatted for the SAP data type field target, according to the format options configured.
 
-Returning `fail` parameter is a flag: if `abap_true` then the check has not been passed.
+`fail = abap_true` means the check has not been passed.
