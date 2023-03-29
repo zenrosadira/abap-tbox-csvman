@@ -72,7 +72,7 @@ In this way, the following table:
 
 gives this CSV as output:
 ```csv
-THE Plant,MATERIAL!!!
+THE Plant,Material!!!
 US01,AAAA01
 US02,BBBB02
 ```
