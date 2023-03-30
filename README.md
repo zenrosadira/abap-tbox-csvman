@@ -145,5 +145,7 @@ in two ways: as a *pre validation* by calling method `add_pre_validation( )`, an
 
 `fail = abap_true` means the check has not been passed.
 
+There are also two global defualt validations: a check verifying that CSV has the same number of fields for each row and a check for empty rows. These checks are applied only calling `check_csv( csv_tab )` method, where `csv_tab` is the CSV file as a table of strings.
+
 ## Installation
 Install this project using [abapGit](https://abapgit.org/) ![abapGit](https://docs.abapgit.org/img/favicon.png)
