@@ -34,6 +34,7 @@ csv_man->read_csv( EXPORTING it_csv = csv_file CHANGING ct_table = t_table_data 
   - `ztbox_cl_csvman=>c_quote_none` *to never quote fields (this is the default behaviour if no quotechar is set).*
 - `csv_man->header( abap_true ).` *to write/expect an header line in write/read mode.*
 - `csv_man->header_desc( abap_true ).` *to use long label description (from data element, in the log-on language) as header text field. If the field is not typed with a dictionary data element its name is still used as description.*
+- `csv_man->ingore_rows( int_range ).` *in read mode, ignore rows whose index is into parameter (it's a range of int)*
 
 ## Output Format
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
