@@ -22,7 +22,7 @@ csv_man->read_csv( EXPORTING it_csv = csv_file CHANGING ct_table = t_table_data 
 :office_worker: **Can I decide which character to use as delimiter, quotechar, and line terminator? And what about escaping special characters?**
 
 :mage: Once instantiated you can configure the csv management object:
-- ``csv_man->delimiter( `;` ).``  *fields delimiter, default is comma:* `,`*.*
+- ``csv_man->delimiter( `;` ).``  *fields delimiter, default is comma:* `,`*. Here "delimiter" is a synonym of "separator".*
 - ``csv_man->quotechar( `"` ).``  *to quote fields, default is none.*
 - ``csv_man->end_of_line( `|` ).`` *line-terminator char, default is Carriage Return and Line Feed* `%_CR_LF` *.*
 - ``csv_man->escapechar( `/` ).`` *to escape special characters, both in read and write mode.*
