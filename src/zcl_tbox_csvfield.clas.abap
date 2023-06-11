@@ -8,95 +8,95 @@ CLASS zcl_tbox_csvfield DEFINITION
   PUBLIC SECTION.
 
     METHODS exclude
-    IMPORTING
-      !i_active TYPE abap_bool DEFAULT abap_true
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_active TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
     METHODS position
-    IMPORTING
-      !i_position TYPE i
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_position TYPE i
+      RETURNING
+        VALUE(r)    TYPE REF TO zcl_tbox_csvfield .
     METHODS include
-    IMPORTING
-      !i_active TYPE abap_bool DEFAULT abap_true
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_active TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
     METHODS label
-    IMPORTING
-      !i_label TYPE string
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_label TYPE string
+      RETURNING
+        VALUE(r) TYPE REF TO zcl_tbox_csvfield .
     METHODS decimals
-    IMPORTING
-      !i_decimals TYPE i
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_decimals TYPE i
+      RETURNING
+        VALUE(r)    TYPE REF TO zcl_tbox_csvfield .
     METHODS number_format
-    IMPORTING
-      !i_number_format TYPE clike
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_number_format TYPE clike
+      RETURNING
+        VALUE(r)         TYPE REF TO zcl_tbox_csvfield .
     METHODS time_format
-    IMPORTING
-      !i_time_format TYPE clike
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_time_format TYPE clike
+      RETURNING
+        VALUE(r)       TYPE REF TO zcl_tbox_csvfield .
     METHODS date_format
-    IMPORTING
-      !i_date_format TYPE clike
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_date_format TYPE clike
+      RETURNING
+        VALUE(r)       TYPE REF TO zcl_tbox_csvfield .
     METHODS country
-    IMPORTING
-      !i_country TYPE land1
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_country TYPE land1
+      RETURNING
+        VALUE(r)   TYPE REF TO zcl_tbox_csvfield .
     METHODS field_length
-    IMPORTING
-      !i_field_length TYPE i
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_field_length TYPE i
+      RETURNING
+        VALUE(r)        TYPE REF TO zcl_tbox_csvfield .
     METHODS keep_init
-    IMPORTING
-      !i_active TYPE abap_bool DEFAULT abap_true
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_active TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
     METHODS alignment
-    IMPORTING
-      !i_alignment TYPE i
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_alignment TYPE i
+      RETURNING
+        VALUE(r)     TYPE REF TO zcl_tbox_csvfield .
     METHODS condense_values
-    IMPORTING
-      !i_active TYPE abap_bool DEFAULT abap_true
-    RETURNING
-      VALUE(r) TYPE REF TO zcl_tbox_csvfield .
+      IMPORTING
+        !i_active TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
     METHODS add_post_validation
-    IMPORTING
-      !i_object_validator TYPE REF TO object OPTIONAL
-      !i_method_validator TYPE clike .
+      IMPORTING
+        !i_object_validator TYPE REF TO object OPTIONAL
+        !i_method_validator TYPE clike .
     METHODS add_pre_validation
-    IMPORTING
-      !i_object_validator TYPE REF TO object OPTIONAL
-      !i_method_validator TYPE clike .
+      IMPORTING
+        !i_object_validator TYPE REF TO object OPTIONAL
+        !i_method_validator TYPE clike .
     METHODS _overflow
-    IMPORTING
-      !i_value TYPE string
-    RETURNING
-      VALUE(r_fail) TYPE abap_bool .
+      IMPORTING
+        !i_value      TYPE string
+      RETURNING
+        VALUE(r_fail) TYPE abap_bool .
     METHODS constructor
       IMPORTING
-        !i_csv TYPE REF TO zcl_tbox_csv_common
+        !i_csv  TYPE REF TO zcl_tbox_csv_common
         !i_name TYPE clike .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
     TYPES:
-    BEGIN OF ts_validation,
-      object_validator TYPE REF TO object,
-      method_validator TYPE string,
-    END OF ts_validation .
+      BEGIN OF ts_validation,
+        object_validator TYPE REF TO object,
+        method_validator TYPE string,
+      END OF ts_validation .
 
     DATA:
     m_pre_validations  TYPE STANDARD TABLE OF ts_validation .
@@ -121,128 +121,135 @@ CLASS zcl_tbox_csvfield DEFINITION
     DATA m_decimals_set TYPE abap_bool .
 
     METHODS _set_basic_type
-    IMPORTING
-      !i_basic_type TYPE abap_typekind .
+      IMPORTING
+        !i_basic_type TYPE abap_typekind .
     METHODS _write
-    IMPORTING
-      !i_sap_value TYPE data
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE data
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _read
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string
-    RAISING
-      zcx_tbox_csvman .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string
+      RAISING
+        zcx_tbox_csvman .
     METHODS _post_validations
-    IMPORTING
-      !i_value TYPE string
-    RAISING
-      zcx_tbox_csvman .
+      IMPORTING
+        !i_value TYPE string
+      RAISING
+        zcx_tbox_csvman .
     METHODS _pre_validations
-    IMPORTING
-      !i_value TYPE string
-    RAISING
-      zcx_tbox_csvman .
+      IMPORTING
+        !i_value TYPE string
+      RAISING
+        zcx_tbox_csvman .
     METHODS _basic_write
-    IMPORTING
-      !i_sap_value TYPE string
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE string
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _basic_read
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _write_char
-    IMPORTING
-      !i_sap_value TYPE data
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE data
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _read_char
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _write_date
-    IMPORTING
-      !i_sap_value TYPE d
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE d
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _read_date
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _write_time
-    IMPORTING
-      !i_sap_value TYPE t
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE t
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _read_time
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _write_numb
-    IMPORTING
-      !i_sap_value TYPE numeric
-    RETURNING
-      VALUE(r_csv_value) TYPE string .
+      IMPORTING
+        !i_sap_value       TYPE numeric
+      RETURNING
+        VALUE(r_csv_value) TYPE string .
     METHODS _read_numb
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _transformation
-    IMPORTING
-      !i_csv_value TYPE string
-    RETURNING
-      VALUE(r_sap_value) TYPE string .
+      IMPORTING
+        !i_csv_value       TYPE string
+      RETURNING
+        VALUE(r_sap_value) TYPE string .
     METHODS _assign_element
-    IMPORTING
-      !i_element TYPE REF TO cl_abap_elemdescr .
+      IMPORTING
+        !i_element TYPE REF TO cl_abap_elemdescr .
     METHODS _get_field_length
-    RETURNING
-      VALUE(result) TYPE i .
+      RETURNING
+        VALUE(result) TYPE i .
     METHODS _get_country
-    RETURNING
-      VALUE(result) TYPE land1 .
+      RETURNING
+        VALUE(result) TYPE land1 .
     METHODS _default_configuration .
     METHODS _get_decimals
-    RETURNING
-      VALUE(r) TYPE i .
+      RETURNING
+        VALUE(r) TYPE i .
     METHODS _invalid_number
-    IMPORTING
-      !i_value TYPE string
-    RETURNING
-      VALUE(r_fail) TYPE abap_bool .
+      IMPORTING
+        !i_value      TYPE string
+      RETURNING
+        VALUE(r_fail) TYPE abap_bool .
     METHODS _invalid_time
-    IMPORTING
-      !i_value TYPE string
-    RETURNING
-      VALUE(r_fail) TYPE abap_bool .
+      IMPORTING
+        !i_value      TYPE string
+      RETURNING
+        VALUE(r_fail) TYPE abap_bool .
     METHODS _invalid_date
-    IMPORTING
-      !i_value TYPE string
-    RETURNING
-      VALUE(r_fail) TYPE abap_bool .
+      IMPORTING
+        !i_value      TYPE string
+      RETURNING
+        VALUE(r_fail) TYPE abap_bool .
     METHODS _validation_time
-    IMPORTING
-      !i_value TYPE string .
+      IMPORTING
+        !i_value TYPE string .
     METHODS _validation_date
-    IMPORTING
-      !i_value TYPE string .
+      IMPORTING
+        !i_value TYPE string .
     METHODS _validation_number
-    IMPORTING
-      !i_value TYPE string .
+      IMPORTING
+        !i_value TYPE string .
 ENDCLASS.
+
 
 
 CLASS zcl_tbox_csvfield IMPLEMENTATION.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->ADD_POST_VALIDATION
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_OBJECT_VALIDATOR             TYPE REF TO OBJECT(optional)
+* | [--->] I_METHOD_VALIDATOR             TYPE        CLIKE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD add_post_validation.
 
     INSERT VALUE #(
@@ -252,6 +259,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->ADD_PRE_VALIDATION
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_OBJECT_VALIDATOR             TYPE REF TO OBJECT(optional)
+* | [--->] I_METHOD_VALIDATOR             TYPE        CLIKE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD add_pre_validation.
 
     INSERT VALUE #(
@@ -261,6 +274,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->ALIGNMENT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ALIGNMENT                    TYPE        I
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD alignment.
 
     m_format_params-alignment = i_alignment.
@@ -270,6 +289,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->CONDENSE_VALUES
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACTIVE                       TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD condense_values.
 
     m_format_params-condense = i_active.
@@ -279,6 +304,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV                          TYPE REF TO ZCL_TBOX_CSV_COMMON
+* | [--->] I_NAME                         TYPE        CLIKE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD constructor.
 
     m_csv           = i_csv.
@@ -292,6 +323,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->COUNTRY
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_COUNTRY                      TYPE        LAND1
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD country.
 
     m_format_params-country = i_country.
@@ -301,6 +338,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->DATE_FORMAT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_DATE_FORMAT                  TYPE        CLIKE
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD date_format.
 
     m_format_params-date_format = zcl_tbox_csv_common=>_create_date_format( i_date_format ).
@@ -310,6 +353,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->DECIMALS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_DECIMALS                     TYPE        I
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD decimals.
 
     m_format_params-decimals  = i_decimals.
@@ -320,6 +369,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->EXCLUDE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACTIVE                       TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD exclude.
 
     IF i_active = abap_true AND NOT line_exists( m_csv->m_exclude_fields[ low = m_field_name ] ).
@@ -340,6 +395,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->FIELD_LENGTH
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_FIELD_LENGTH                 TYPE        I
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD field_length.
 
     m_field_length      = i_field_length.
@@ -349,6 +410,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->INCLUDE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACTIVE                       TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD include.
 
     IF i_active = abap_true AND NOT line_exists( m_csv->m_include_fields[ low = m_field_name ] ).
@@ -369,6 +436,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->KEEP_INIT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACTIVE                       TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD keep_init.
 
     m_format_params-keep_init = i_active.
@@ -378,6 +451,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->LABEL
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_LABEL                        TYPE        STRING
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD label.
 
     m_label = i_label.
@@ -387,6 +466,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->NUMBER_FORMAT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_NUMBER_FORMAT                TYPE        CLIKE
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD number_format.
 
     m_format_params-number_format = i_number_format.
@@ -396,6 +481,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->POSITION
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_POSITION                     TYPE        I
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD position.
 
     IF line_exists( m_csv->m_fields_mapping[ field = m_field_name ] ).
@@ -417,6 +508,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->TIME_FORMAT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_TIME_FORMAT                  TYPE        CLIKE
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD time_format.
 
     m_format_params-time_format = zcl_tbox_csv_common=>_create_time_format( i_time_format ).
@@ -426,6 +523,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_ASSIGN_ELEMENT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ELEMENT                      TYPE REF TO CL_ABAP_ELEMDESCR
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _assign_element.
 
     m_element = i_element.
@@ -437,6 +539,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_BASIC_READ
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _basic_read.
 
     r_sap_value = COND #( WHEN m_format_params-condense = abap_true THEN condense( i_csv_value ) ELSE i_csv_value ).
@@ -444,6 +552,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_BASIC_WRITE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        STRING
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _basic_write.
 
     r_csv_value = i_sap_value.
@@ -451,6 +565,10 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_DEFAULT_CONFIGURATION
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _default_configuration.
 
     IF m_format_params-alignment IS INITIAL.
@@ -460,6 +578,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_GET_COUNTRY
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RESULT                         TYPE        LAND1
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _get_country.
 
     result = COND #(
@@ -477,6 +600,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_GET_DECIMALS
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] R                              TYPE        I
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _get_decimals.
 
     r = COND #(
@@ -487,6 +615,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_GET_FIELD_LENGTH
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RESULT                         TYPE        I
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _get_field_length.
 
     result = COND #(
@@ -496,21 +629,41 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_INVALID_DATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [<-()] R_FAIL                         TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _invalid_date.
 
     r_fail = abap_true.
 
-    IF NOT contains( val    = i_value
-                     pcre   = '^\d{8}$' ).
+    IF NOT contains( val   = i_value
+                     pcre  = '^\d{8}$' ).
       RETURN.
     ENDIF.
 
+    TRY.
+        DATA(res) = xco_cp_time=>date(
+          iv_year  = CONV #( i_value(4) )
+          iv_month = CONV #( i_value+2(2) )
+          iv_day   = CONV #( i_value+4(2) ) ).
+      CATCH cx_no_check.
+        RETURN.
+    ENDTRY.
 
     r_fail = abap_false.
 
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_INVALID_NUMBER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [<-()] R_FAIL                         TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _invalid_number.
 
     r_fail = abap_true.
@@ -531,16 +684,41 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_INVALID_TIME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [<-()] R_FAIL                         TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _invalid_time.
 
     r_fail = abap_true.
 
+    IF NOT contains( val   = i_value
+                     pcre  = '^\d{6}$' ).
+      RETURN.
+    ENDIF.
+
+    TRY.
+        xco_cp_time=>time(
+           iv_hour      = CONV #( i_value(2) )
+           iv_minute    = CONV #( i_value+2(2) )
+           iv_second    = CONV #( i_value+4(2) ) ).
+      CATCH cx_no_check.
+        RETURN.
+    ENDTRY.
 
     r_fail = abap_false.
 
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->_OVERFLOW
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [<-()] R_FAIL                         TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _overflow.
 
 
@@ -549,6 +727,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_POST_VALIDATIONS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [!CX!] ZCX_TBOX_CSVMAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _post_validations.
 
     DATA fail TYPE abap_bool.
@@ -556,8 +740,10 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     LOOP AT m_post_validations INTO DATA(post_val).
 
       CALL METHOD post_val-object_validator->(post_val-method_validator)
-        EXPORTING i_value = i_value
-        RECEIVING r_fail  = fail.
+        EXPORTING
+          i_value = i_value
+        RECEIVING
+          r_fail  = fail.
 
       IF fail = abap_true.
 
@@ -577,6 +763,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_PRE_VALIDATIONS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* | [!CX!] ZCX_TBOX_CSVMAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _pre_validations.
 
     DATA fail TYPE abap_bool.
@@ -584,9 +776,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     LOOP AT m_pre_validations INTO DATA(pre_val).
 
       TRY.
-          CALL METHOD pre_val-object_validator->(pre_val-method_validator) 
-            EXPORTING i_value = i_value 
-            RECEIVING r_fail  = fail.
+          CALL METHOD pre_val-object_validator->(pre_val-method_validator)
+            EXPORTING
+              i_value = i_value
+            RECEIVING
+              r_fail  = fail.
         CATCH cx_root INTO DATA(x_root).
           RAISE EXCEPTION TYPE zcx_tbox_csvman EXPORTING text = x_root->get_text( ).
       ENDTRY.
@@ -606,6 +800,13 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_READ
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* | [!CX!] ZCX_TBOX_CSVMAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _read.
 
     CLEAR m_abort.
@@ -629,6 +830,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_READ_CHAR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _read_char.
 
     r_sap_value = i_csv_value.
@@ -636,6 +843,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_READ_DATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _read_date.
 
     DATA(csv_value) = condense( i_csv_value ).
@@ -647,10 +860,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 
     DATA internal_date TYPE c LENGTH 8.
 
+    DATA(current_date) = cl_abap_context_info=>get_system_date( ).
+
     internal_date(4) = COND #(
       WHEN m_format_params-date_format-yy_len = 4
         THEN csv_value+m_format_params-date_format-yy_off(4)
-        ELSE |{ sy-datum(2) }{ csv_value+m_format_params-date_format-yy_off(2) }| ).
+        ELSE |{ current_date(2) }{ csv_value+m_format_params-date_format-yy_off(2) }| ).
 
     internal_date+4(2) = csv_value+m_format_params-date_format-mm_off(2).
     internal_date+6(2) = csv_value+m_format_params-date_format-dd_off(2).
@@ -662,6 +877,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_READ_NUMB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _read_numb.
 
     IF i_csv_value IS INITIAL.
@@ -683,15 +904,15 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 
     IF thousand_sep IS NOT INITIAL.
       r_sap_value  = replace( val = r_sap_value
-                              occ = 0 
-                              sub = thousand_sep 
+                              occ = 0
+                              sub = thousand_sep
                               with = ` ` ).
     ENDIF.
 
     IF decimals_sep IS NOT INITIAL.
       r_sap_value  = replace( val = r_sap_value
-                              occ = 0 
-                              sub = decimals_sep 
+                              occ = 0
+                              sub = decimals_sep
                               with = `.` ).
     ENDIF.
 
@@ -702,6 +923,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_READ_TIME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _read_time.
 
     DATA(csv_value) = condense( i_csv_value ).
@@ -724,6 +951,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_SET_BASIC_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_BASIC_TYPE                   TYPE        ABAP_TYPEKIND
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _set_basic_type.
 
     m_basic_type = i_basic_type.
@@ -731,6 +963,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_TRANSFORMATION
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _transformation.
 
     DATA(basic_value) = _basic_read( i_csv_value ).
@@ -752,6 +990,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_VALIDATION_DATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _validation_date.
 
     DATA(csv) = CAST zcl_tbox_csv_reader( m_csv ).
@@ -769,6 +1012,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_VALIDATION_NUMBER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _validation_number.
 
     DATA(csv) = CAST zcl_tbox_csv_reader( m_csv ).
@@ -797,6 +1045,11 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_VALIDATION_TIME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_VALUE                        TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _validation_time.
 
     DATA(csv) = CAST zcl_tbox_csv_reader( m_csv ).
@@ -814,6 +1067,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_WRITE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        DATA
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write.
 
     DATA(string_value) = SWITCH #( m_basic_type
@@ -835,6 +1094,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_WRITE_CHAR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        DATA
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write_char.
 
     r_csv_value = |{ i_sap_value WIDTH = _get_field_length( ) ALIGN = (m_format_params-alignment) }|.
@@ -847,6 +1112,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_WRITE_DATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        D
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write_date.
 
     DATA c_date TYPE c LENGTH 10 VALUE '..........'.
@@ -864,24 +1135,24 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     DATA(yy) = COND #( WHEN m_format_params-date_format-yy_len = 4 THEN sap_value_str(4) ELSE sap_value_str+2(2) ).
 
     c_date = replace( val = c_date
-                      off = m_format_params-date_format-dd_off 
-                      len = 2 
+                      off = m_format_params-date_format-dd_off
+                      len = 2
                       with = dd ).
     c_date = replace( val = c_date
-                      off = m_format_params-date_format-mm_off 
-                      len = 2 
+                      off = m_format_params-date_format-mm_off
+                      len = 2
                       with = mm ).
     c_date = replace( val = c_date
-                      off = m_format_params-date_format-yy_off 
-                      len = m_format_params-date_format-yy_len 
+                      off = m_format_params-date_format-yy_off
+                      len = m_format_params-date_format-yy_len
                       with = yy ).
     c_date = replace( val = c_date
-                      occ = 0 
-                      sub = ` ` 
+                      occ = 0
+                      sub = ` `
                       with = '0' ).
     c_date = replace( val = c_date
-                      occ = 0 
-                      sub = '.' 
+                      occ = 0
+                      sub = '.'
                       with = m_format_params-date_format-sep ).
 
     r_csv_value = c_date.
@@ -889,6 +1160,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_WRITE_NUMB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        NUMERIC
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write_numb.
 
     DATA(country)   = _get_country( ).
@@ -899,8 +1176,8 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
       AND m_format_params-number_format     = c_dec_separator_3.
 
       csv_value = replace( val = csv_value
-                           occ = 0 
-                           sub = `.` 
+                           occ = 0
+                           sub = `.`
                            with = ` ` ).
 
     ENDIF.
@@ -914,6 +1191,12 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_WRITE_TIME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        T
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write_time.
 
     DATA c_time TYPE c LENGTH 8 VALUE '........'.
@@ -927,24 +1210,24 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     CHECK sap_value_str IS NOT INITIAL.
 
     c_time = replace( val = c_time
-                      off = m_format_params-time_format-hh_off 
-                      len = 2 
+                      off = m_format_params-time_format-hh_off
+                      len = 2
                       with = sap_value_str(2) ).
     c_time = replace( val = c_time
-                      off = m_format_params-time_format-mm_off 
-                      len = 2 
+                      off = m_format_params-time_format-mm_off
+                      len = 2
                       with = sap_value_str+2(2) ).
     c_time = replace( val = c_time
-                      off = m_format_params-time_format-ss_off 
-                      len = 2 
+                      off = m_format_params-time_format-ss_off
+                      len = 2
                       with = sap_value_str+4(2) ).
     c_time = replace( val = c_time
-                      occ = 0 
-                      sub = ` ` 
+                      occ = 0
+                      sub = ` `
                       with = '0' ).
     c_time = replace( val = c_time
-                      occ = 0 
-                      sub = '.' 
+                      occ = 0
+                      sub = '.'
                       with = m_format_params-time_format-sep ).
 
     r_csv_value = c_time.
