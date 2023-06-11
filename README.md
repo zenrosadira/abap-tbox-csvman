@@ -5,6 +5,8 @@
 ## Requirement
 :cloud: ABAP for Cloud Development edition
 
+Looking for *On-Premise* edition? Switch to *onprem-main* branch.
+
 ## Quick Start
 
 :office_worker: **I need to read a CSV, how can I do it?**
@@ -87,14 +89,14 @@ csv_reader->detranspose( EXPORTING i_transposed = csv_tab_t IMPORTING e_table = 
 - ``csv_man->quotechar( `"` ).``  *to quote fields, default is none.
 - ``csv_man->end_of_line( `|` ).`` *line-terminator char, default is Carriage Return and Line Feed* `%_CR_LF` *.*
 - ``csv_man->escapechar( `/` ).`` *to escape special characters, both in read and write mode.*
-- ``csv_man->doublequote( abap_true ).`` *to escape a quotechar character with a quotechar character.*
+- ``csv_man->doublequote( ).`` *to escape a quotechar character with a quotechar character.*
 - `csv_man->quoting( ztbox_cl_csvman=>c_quote_minimal ).` *to restrict quoting application, with these options:*
   - `zcl_tbox_csv_writer=>c_quote_all` *to apply quotechar character to all fields (this is default behaviour if a quotechar is set);*
   - `zcl_tbox_csv_writer=>c_quote_minimal` *to apply quotechar character only to fields containing special characters;*
   - `zcl_tbox_csv_writer=>c_quote_nonnumeric` *to apply quotechar character only to non-numeric fields;*
   - `zcl_tbox_csv_writer=>c_quote_none` *to never quote fields (this is the default behaviour if no quotechar is set).*
-- `csv_man->header( abap_true ).` *to write/expect an header line in write/read mode. Default is* `abap_true` *.*
-- `csv_man->header_desc( abap_true ).` *to use field name as header text field. You can column text by calling* `->label( )` *method on fields level, see below for details.*
+- `csv_man->header( ).` *to write/expect an header line in write/read mode. Default is* `abap_true` *.*
+- `csv_man->header_desc( ).` *to use field name as header text field. You can column text by calling* `->label( )` *method on fields level, see below for details.*
 
 ## Output Format
 :office_worker: **Nice, but I want also control fields output format, especially for date/time/numeric fields.**
