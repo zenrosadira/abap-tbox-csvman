@@ -721,6 +721,13 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _overflow.
 
+    r_fail = abap_true.
+
+    SPLIT i_value AT '.' INTO DATA(int) DATA(dec).
+    int = replace( val = int occ = 0 sub = `-` with = ` ` ).
+    CONDENSE int.
+
+    CHECK strlen( int ) LE m_element->length * 2 - 1 - m_element->decimals.
 
     r_fail = abap_false.
 
