@@ -1,46 +1,34 @@
-class ZCX_TBOX_CSVMAN definition
-  public
-  inheriting from CX_STATIC_CHECK
-  final
-  create public .
+CLASS zcx_tbox_csvman DEFINITION
+  PUBLIC
+  INHERITING FROM cx_static_check
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
+    CONSTANTS zcx_tbox_csvman TYPE c LENGTH 32 VALUE '00155DB5F7D41EDE81F31844E11B0321'.
+    DATA text TYPE string .
 
-  constants ZCX_TBOX_CSVMAN type SOTR_CONC value '00155DDCB56F1EEDB3CD4A4C933A527D' ##NO_TEXT.
-  constants INVALID_TABLE type SOTR_CONC value '00155DDCB56F1EEDB3CCE751CC8D9242' ##NO_TEXT.
-  constants INVALID_DELIM_QUOTE type SOTR_CONC value '00155DDCB56F1EEDB3CE2CBB4A7C5306' ##NO_TEXT.
-  constants INVALID_DELIM_ESCAPE type SOTR_CONC value '00155DDCB56F1EEDB3CE2CBB4A7C7306' ##NO_TEXT.
-  constants INVALID_ESCAPE_QUOTE type SOTR_CONC value '00155DDCB56F1EEDB3CE2CBB4A7C9306' ##NO_TEXT.
-  constants QUOTECHAR_DOUBLE type SOTR_CONC value '00155DDCB56F1EEDB3CE30A1422C5307' ##NO_TEXT.
-  constants QUOTECHAR_QUOTING type SOTR_CONC value '00155DDCB56F1EEDB3CE30A1422C7307' ##NO_TEXT.
-  data METHOD_NAME type SEOCMPNAME .
-  data SAP_VALUE type STRING .
-
-  methods CONSTRUCTOR
-    importing
-      !TEXTID like TEXTID optional
-      !PREVIOUS like PREVIOUS optional
-      !METHOD_NAME type SEOCMPNAME optional
-      !SAP_VALUE type STRING optional .
-protected section.
-private section.
+    METHODS constructor
+      IMPORTING
+        !textid   LIKE textid OPTIONAL
+        !previous LIKE previous OPTIONAL
+        !text     TYPE string OPTIONAL .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
+CLASS zcx_tbox_csvman IMPLEMENTATION.
 
-CLASS ZCX_TBOX_CSVMAN IMPLEMENTATION.
 
-
-  method CONSTRUCTOR.
-CALL METHOD SUPER->CONSTRUCTOR
+  METHOD constructor.
+    CALL METHOD super->constructor
 EXPORTING
-TEXTID = TEXTID
-PREVIOUS = PREVIOUS
+textid = textid
+previous = previous
 .
- IF textid IS INITIAL.
-   me->textid = ZCX_TBOX_CSVMAN .
- ENDIF.
-me->METHOD_NAME = METHOD_NAME .
-me->SAP_VALUE = SAP_VALUE .
-  endmethod.
+    IF textid IS INITIAL.
+      me->textid = zcx_tbox_csvman .
+    ENDIF.
+    me->text = text .
+  ENDMETHOD.
 ENDCLASS.

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TBOX_CSV_WRITER</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>CSV Writer</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>M_CURRENT_FIELD_OBJ</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>CSV Manager | CSV Field</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>WRITE</CMPNAME>
+     <SCONAME>ZCX_TBOX_CSVMAN</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>CSV Manager Exceptions</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>WRITE_TO_STRING_TABLE</CMPNAME>
+     <SCONAME>R</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Table of Strings</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>WRITE_TO_STRING_TABLE</CMPNAME>
+     <SCONAME>ZCX_TBOX_CSVMAN</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>CSV Manager Exceptions</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>_TO_STRING_TABLE</CMPNAME>
+     <SCONAME>R</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Table of Strings</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>
