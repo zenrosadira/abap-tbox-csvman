@@ -1,247 +1,265 @@
-CLASS zcl_tbox_csvfield DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PRIVATE
+class ZCL_TBOX_CSVFIELD definition
+  public
+  final
+  create private
 
-  GLOBAL FRIENDS zcl_tbox_csv_common .
+  global friends ZCL_TBOX_CSV_COMMON .
 
-  PUBLIC SECTION.
+public section.
 
-    METHODS exclude
-      IMPORTING
-        !i_active TYPE abap_bool DEFAULT abap_true
-      RETURNING
-        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
-    METHODS position
-      IMPORTING
-        !i_position TYPE i
-      RETURNING
-        VALUE(r)    TYPE REF TO zcl_tbox_csvfield .
-    METHODS include
-      IMPORTING
-        !i_active TYPE abap_bool DEFAULT abap_true
-      RETURNING
-        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
-    METHODS label
-      IMPORTING
-        !i_label TYPE string
-      RETURNING
-        VALUE(r) TYPE REF TO zcl_tbox_csvfield .
-    METHODS decimals
-      IMPORTING
-        !i_decimals TYPE i
-      RETURNING
-        VALUE(r)    TYPE REF TO zcl_tbox_csvfield .
-    METHODS number_format
-      IMPORTING
-        !i_number_format TYPE clike
-      RETURNING
-        VALUE(r)         TYPE REF TO zcl_tbox_csvfield .
-    METHODS time_format
-      IMPORTING
-        !i_time_format TYPE clike
-      RETURNING
-        VALUE(r)       TYPE REF TO zcl_tbox_csvfield .
-    METHODS date_format
-      IMPORTING
-        !i_date_format TYPE clike
-      RETURNING
-        VALUE(r)       TYPE REF TO zcl_tbox_csvfield .
-    METHODS country
-      IMPORTING
-        !i_country TYPE land1
-      RETURNING
-        VALUE(r)   TYPE REF TO zcl_tbox_csvfield .
-    METHODS field_length
-      IMPORTING
-        !i_field_length TYPE i
-      RETURNING
-        VALUE(r)        TYPE REF TO zcl_tbox_csvfield .
-    METHODS keep_init
-      IMPORTING
-        !i_active TYPE abap_bool DEFAULT abap_true
-      RETURNING
-        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
-    METHODS alignment
-      IMPORTING
-        !i_alignment TYPE i
-      RETURNING
-        VALUE(r)     TYPE REF TO zcl_tbox_csvfield .
-    METHODS condense_values
-      IMPORTING
-        !i_active TYPE abap_bool DEFAULT abap_true
-      RETURNING
-        VALUE(r)  TYPE REF TO zcl_tbox_csvfield .
-    METHODS add_post_validation
-      IMPORTING
-        !i_object_validator TYPE REF TO object OPTIONAL
-        !i_method_validator TYPE clike .
-    METHODS add_pre_validation
-      IMPORTING
-        !i_object_validator TYPE REF TO object OPTIONAL
-        !i_method_validator TYPE clike .
-    METHODS _overflow
-      IMPORTING
-        !i_value      TYPE string
-      RETURNING
-        VALUE(r_fail) TYPE abap_bool .
-    METHODS constructor
-      IMPORTING
-        !i_csv  TYPE REF TO zcl_tbox_csv_common
-        !i_name TYPE clike .
+  methods EXCLUDE
+    importing
+      !I_ACTIVE type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods POSITION
+    importing
+      !I_POSITION type I
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods INCLUDE
+    importing
+      !I_ACTIVE type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods LABEL
+    importing
+      !I_LABEL type STRING
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods DECIMALS
+    importing
+      !I_DECIMALS type I
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods NUMBER_FORMAT
+    importing
+      !I_NUMBER_FORMAT type CLIKE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods TIME_FORMAT
+    importing
+      !I_TIME_FORMAT type CLIKE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods DATE_FORMAT
+    importing
+      !I_DATE_FORMAT type CLIKE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods COUNTRY
+    importing
+      !I_COUNTRY type LAND1
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods FIELD_LENGTH
+    importing
+      !I_FIELD_LENGTH type I
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods KEEP_INIT
+    importing
+      !I_ACTIVE type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods ALIGNMENT
+    importing
+      !I_ALIGNMENT type I
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods CONV_EXIT
+    importing
+      !I_ACTIVE type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods CONDENSE_VALUES
+    importing
+      !I_ACTIVE type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(R) type ref to ZCL_TBOX_CSVFIELD .
+  methods ADD_POST_VALIDATION
+    importing
+      !I_OBJECT_VALIDATOR type ref to OBJECT optional
+      !I_METHOD_VALIDATOR type CLIKE .
+  methods ADD_PRE_VALIDATION
+    importing
+      !I_OBJECT_VALIDATOR type ref to OBJECT optional
+      !I_METHOD_VALIDATOR type CLIKE .
+  methods _OVERFLOW
+    importing
+      !I_VALUE type STRING
+    returning
+      value(R_FAIL) type ABAP_BOOL .
+  methods CONSTRUCTOR
+    importing
+      !I_CSV type ref to ZCL_TBOX_CSV_COMMON
+      !I_NAME type CLIKE .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    TYPES:
-      BEGIN OF ts_validation,
+  types:
+    BEGIN OF ts_validation,
         object_validator TYPE REF TO object,
         method_validator TYPE string,
       END OF ts_validation .
 
-    DATA:
+  data:
     m_pre_validations  TYPE STANDARD TABLE OF ts_validation .
-    DATA:
+  data:
     m_post_validations TYPE STANDARD TABLE OF ts_validation .
-    DATA m_csv TYPE REF TO zcl_tbox_csv_common .
-    DATA m_field_name TYPE string .
-    DATA m_basic_type TYPE abap_typekind .
-    DATA m_format_params TYPE zcl_tbox_csv_common=>ts_format_params .
-    DATA m_label TYPE string .
-    DATA m_abort TYPE abap_bool .
-    CONSTANTS c_initial_date TYPE string VALUE '00000000' ##NO_TEXT.
-    CONSTANTS c_initial_time TYPE string VALUE '000000' ##NO_TEXT.
-    CONSTANTS:
-    c_dec_separator_3 TYPE c LENGTH 1 VALUE 'Y' ##NO_TEXT.
-    CONSTANTS:
-    c_dec_separator_2 TYPE c LENGTH 1 VALUE 'X' ##NO_TEXT.
-    CONSTANTS:
-    c_dec_separator_1 TYPE c LENGTH 1 VALUE '' ##NO_TEXT.
-    DATA m_element TYPE REF TO cl_abap_elemdescr .
-    DATA m_field_length TYPE i .
-    DATA m_decimals_set TYPE abap_bool .
+  data M_CSV type ref to ZCL_TBOX_CSV_COMMON .
+  data M_FIELD_NAME type STRING .
+  data M_BASIC_TYPE type ABAP_TYPEKIND .
+  data M_FORMAT_PARAMS type ZCL_TBOX_CSV_COMMON=>TS_FORMAT_PARAMS .
+  data M_LABEL type STRING .
+  data M_ABORT type ABAP_BOOL .
+  constants C_INITIAL_DATE type STRING value '00000000' ##NO_TEXT.
+  constants C_INITIAL_TIME type STRING value '000000' ##NO_TEXT.
+  constants:
+    c_dec_separator_3 TYPE c LENGTH 1 value 'Y' ##NO_TEXT.
+  constants:
+    c_dec_separator_2 TYPE c LENGTH 1 value 'X' ##NO_TEXT.
+  constants:
+    c_dec_separator_1 TYPE c LENGTH 1 value '' ##NO_TEXT.
+  data M_ELEMENT type ref to CL_ABAP_ELEMDESCR .
+  data M_FIELD_LENGTH type I .
+  data M_DECIMALS_SET type ABAP_BOOL .
+  data M_CONVERSION_EXIT type ABAP_BOOL .
 
-    METHODS _set_basic_type
-      IMPORTING
-        !i_basic_type TYPE abap_typekind .
-    METHODS _write
-      IMPORTING
-        !i_sap_value       TYPE data
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _read
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string
-      RAISING
-        zcx_tbox_csvman .
-    METHODS _post_validations
-      IMPORTING
-        !i_value TYPE string
-      RAISING
-        zcx_tbox_csvman .
-    METHODS _pre_validations
-      IMPORTING
-        !i_value TYPE string
-      RAISING
-        zcx_tbox_csvman .
-    METHODS _basic_write
-      IMPORTING
-        !i_sap_value       TYPE string
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _basic_read
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _write_char
-      IMPORTING
-        !i_sap_value       TYPE data
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _read_char
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _write_date
-      IMPORTING
-        !i_sap_value       TYPE d
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _read_date
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _write_time
-      IMPORTING
-        !i_sap_value       TYPE t
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _read_time
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _write_numb
-      IMPORTING
-        !i_sap_value       TYPE numeric
-      RETURNING
-        VALUE(r_csv_value) TYPE string .
-    METHODS _read_numb
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _transformation
-      IMPORTING
-        !i_csv_value       TYPE string
-      RETURNING
-        VALUE(r_sap_value) TYPE string .
-    METHODS _assign_element
-      IMPORTING
-        !i_element TYPE REF TO cl_abap_elemdescr .
-    METHODS _get_field_length
-      RETURNING
-        VALUE(result) TYPE i .
-    METHODS _get_country
-      RETURNING
-        VALUE(result) TYPE land1 .
-    METHODS _default_configuration .
-    METHODS _get_decimals
-      RETURNING
-        VALUE(r) TYPE i .
-    METHODS _invalid_number
-      IMPORTING
-        !i_value      TYPE string
-      RETURNING
-        VALUE(r_fail) TYPE abap_bool .
-    METHODS _invalid_time
-      IMPORTING
-        !i_value      TYPE string
-      RETURNING
-        VALUE(r_fail) TYPE abap_bool .
-    METHODS _invalid_date
-      IMPORTING
-        !i_value      TYPE string
-      RETURNING
-        VALUE(r_fail) TYPE abap_bool .
-    METHODS _validation_time
-      IMPORTING
-        !i_value TYPE string .
-    METHODS _validation_date
-      IMPORTING
-        !i_value TYPE string .
-    METHODS _validation_number
-      IMPORTING
-        !i_value TYPE string .
+  methods _SET_BASIC_TYPE
+    importing
+      !I_BASIC_TYPE type ABAP_TYPEKIND .
+  methods _WRITE
+    importing
+      !I_SAP_VALUE type DATA
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _READ
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING
+    raising
+      ZCX_TBOX_CSVMAN .
+  methods _POST_VALIDATIONS
+    importing
+      !I_VALUE type STRING
+    raising
+      ZCX_TBOX_CSVMAN .
+  methods _PRE_VALIDATIONS
+    importing
+      !I_VALUE type STRING
+    raising
+      ZCX_TBOX_CSVMAN .
+  methods _BASIC_WRITE
+    importing
+      !I_SAP_VALUE type STRING
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _BASIC_READ
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _WRITE_CHAR
+    importing
+      !I_SAP_VALUE type DATA
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _READ_CHAR
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _WRITE_DATE
+    importing
+      !I_SAP_VALUE type D
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _READ_DATE
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _WRITE_TIME
+    importing
+      !I_SAP_VALUE type T
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _READ_TIME
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _WRITE_NUMB
+    importing
+      !I_SAP_VALUE type NUMERIC
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _READ_NUMB
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _TRANSFORMATION
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING .
+  methods _ASSIGN_ELEMENT
+    importing
+      !I_ELEMENT type ref to CL_ABAP_ELEMDESCR .
+  methods _GET_FIELD_LENGTH
+    returning
+      value(RESULT) type I .
+  methods _GET_COUNTRY
+    returning
+      value(RESULT) type LAND1 .
+  methods _DEFAULT_CONFIGURATION .
+  methods _GET_DECIMALS
+    returning
+      value(R) type I .
+  methods _INVALID_NUMBER
+    importing
+      !I_VALUE type STRING
+    returning
+      value(R_FAIL) type ABAP_BOOL .
+  methods _INVALID_TIME
+    importing
+      !I_VALUE type STRING
+    returning
+      value(R_FAIL) type ABAP_BOOL .
+  methods _INVALID_DATE
+    importing
+      !I_VALUE type STRING
+    returning
+      value(R_FAIL) type ABAP_BOOL .
+  methods _VALIDATION_TIME
+    importing
+      !I_VALUE type STRING .
+  methods _VALIDATION_DATE
+    importing
+      !I_VALUE type STRING .
+  methods _VALIDATION_NUMBER
+    importing
+      !I_VALUE type STRING .
+  methods _TO_EXTERNAL_FORMAT
+    importing
+      !I_SAP_VALUE type DATA
+    returning
+      value(R_CSV_VALUE) type STRING .
+  methods _TO_INTERNAL_FORMAT
+    importing
+      !I_CSV_VALUE type STRING
+    returning
+      value(R_SAP_VALUE) type STRING
+    raising
+      ZCX_TBOX_CSVMAN .
 ENDCLASS.
 
 
 
-CLASS zcl_tbox_csvfield IMPLEMENTATION.
+CLASS ZCL_TBOX_CSVFIELD IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -319,6 +337,21 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     m_decimals_set  = m_csv->m_decimals_set.
 
     _default_configuration( ).
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TBOX_CSVFIELD->CONV_EXIT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_ACTIVE                       TYPE        ABAP_BOOL (default =ABAP_TRUE)
+* | [<-()] R                              TYPE REF TO ZCL_TBOX_CSVFIELD
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD conv_exit.
+
+    m_format_params-convexit = i_active.
+
+    r = me.
 
   ENDMETHOD.
 
@@ -547,7 +580,16 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _basic_read.
 
-    r_sap_value = COND #( WHEN m_format_params-condense = abap_true THEN condense( i_csv_value ) ELSE i_csv_value ).
+    CLEAR m_conversion_exit.
+
+    r_sap_value = COND #(
+      WHEN m_format_params-condense = abap_true
+        THEN condense( i_csv_value )
+        ELSE i_csv_value ).
+
+    IF m_format_params-convexit = abap_true.
+      r_sap_value = _to_internal_format( i_csv_value ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -639,19 +681,23 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 
     r_fail = abap_true.
 
-    IF NOT contains( val   = i_value
-                     pcre  = '^\d{8}$' ).
+    IF NOT contains( val    = i_value
+                     regex  = '^\d{8}$' ).
       RETURN.
     ENDIF.
 
-    TRY.
-        DATA(res) = xco_cp_time=>date(
-          iv_year  = CONV #( i_value(4) )
-          iv_month = CONV #( i_value+4(2) )
-          iv_day   = CONV #( i_value+6(2) ) ).
-      CATCH cx_no_check.
-        RETURN.
-    ENDTRY.
+    DATA(value_date) = CONV d( i_value ).
+
+    CALL FUNCTION 'DATE_CHECK_PLAUSIBILITY'
+      EXPORTING
+        date                      = value_date
+      EXCEPTIONS
+        error_message             = -1
+        plausibility_check_failed = 1
+        OTHERS                    = 2.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
 
     r_fail = abap_false.
 
@@ -695,18 +741,22 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     r_fail = abap_true.
 
     IF NOT contains( val   = i_value
-                     pcre  = '^\d{6}$' ).
+                     regex = '^\d{6}$' ).
       RETURN.
     ENDIF.
 
-    TRY.
-        xco_cp_time=>time(
-           iv_hour      = CONV #( i_value(2) )
-           iv_minute    = CONV #( i_value+2(2) )
-           iv_second    = CONV #( i_value+4(2) ) ).
-      CATCH cx_no_check.
-        RETURN.
-    ENDTRY.
+    DATA(value_time) = CONV t( i_value ).
+
+    CALL FUNCTION 'TIME_CHECK_PLAUSIBILITY'
+      EXPORTING
+        time                      = value_time
+      EXCEPTIONS
+        error_message             = -1
+        plausibility_check_failed = 1
+        OTHERS                    = 2.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
 
     r_fail = abap_false.
 
@@ -721,13 +771,6 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _overflow.
 
-    r_fail = abap_true.
-
-    SPLIT i_value AT '.' INTO DATA(int) DATA(dec).
-    int = replace( val = int occ = 0 sub = `-` with = ` ` ).
-    CONDENSE int.
-
-    CHECK strlen( int ) LE m_element->length * 2 - 1 - m_element->decimals.
 
     r_fail = abap_false.
 
@@ -867,12 +910,10 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 
     DATA internal_date TYPE c LENGTH 8.
 
-    DATA(current_date) = cl_abap_context_info=>get_system_date( ).
-
     internal_date(4) = COND #(
       WHEN m_format_params-date_format-yy_len = 4
         THEN csv_value+m_format_params-date_format-yy_off(4)
-        ELSE |{ current_date(2) }{ csv_value+m_format_params-date_format-yy_off(2) }| ).
+        ELSE |{ sy-datum(2) }{ csv_value+m_format_params-date_format-yy_off(2) }| ).
 
     internal_date+4(2) = csv_value+m_format_params-date_format-mm_off(2).
     internal_date+6(2) = csv_value+m_format_params-date_format-dd_off(2).
@@ -966,6 +1007,64 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
   METHOD _set_basic_type.
 
     m_basic_type = i_basic_type.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_TO_EXTERNAL_FORMAT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_SAP_VALUE                    TYPE        DATA
+* | [<-()] R_CSV_VALUE                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD _to_external_format.
+
+    CHECK m_element->is_ddic_type( ).
+
+    DATA(dfies) = m_element->get_ddic_field( sy-langu ).
+
+    CHECK dfies-convexit IS NOT INITIAL.
+
+    cl_rsan_ut_conversion_exit=>convert_to_extern(
+      EXPORTING
+        i_fieldinfo       = CORRESPONDING #( dfies )
+        i_internal_value  = i_sap_value
+      IMPORTING
+        e_external_value  = r_csv_value ).
+
+    m_conversion_exit = abap_true.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_TBOX_CSVFIELD->_TO_INTERNAL_FORMAT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_CSV_VALUE                    TYPE        STRING
+* | [<-()] R_SAP_VALUE                    TYPE        STRING
+* | [!CX!] ZCX_TBOX_CSVMAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD _to_internal_format.
+
+    r_sap_value = i_csv_value.
+
+    CHECK m_element->is_ddic_type( ).
+
+    DATA(dfies) = m_element->get_ddic_field( sy-langu ).
+
+    CHECK dfies-convexit IS NOT INITIAL.
+
+    cl_rsan_ut_conversion_exit=>convert_to_intern(
+      EXPORTING
+        i_fieldinfo       = CORRESPONDING #( dfies )
+        i_external_value  = i_csv_value
+      IMPORTING
+        e_internal_value  = r_sap_value
+      EXCEPTIONS
+        failed            = 1 ).
+    IF sy-subrc = 0.
+      m_conversion_exit = abap_true.
+    ENDIF.
 
   ENDMETHOD.
 
@@ -1081,6 +1180,14 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
 * | [<-()] R_CSV_VALUE                    TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD _write.
+
+    CLEAR m_conversion_exit.
+
+    IF m_format_params-convexit = abap_true.
+      r_csv_value = _to_external_format( i_sap_value ).
+    ENDIF.
+
+    CHECK m_conversion_exit = abap_false.
 
     DATA(string_value) = SWITCH #( m_basic_type
 
