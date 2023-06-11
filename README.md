@@ -5,7 +5,7 @@
 ## Requirement
 Standard ABAP version 75*
 
-Looking for Cloud-Ready version? Switch to the *cloud-master* branch.
+Looking for Cloud-Ready version? Switch to the *cloud-main* branch.
 
 ## Quick Start
 
