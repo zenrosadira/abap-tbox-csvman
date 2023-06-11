@@ -647,8 +647,8 @@ CLASS zcl_tbox_csvfield IMPLEMENTATION.
     TRY.
         DATA(res) = xco_cp_time=>date(
           iv_year  = CONV #( i_value(4) )
-          iv_month = CONV #( i_value+2(2) )
-          iv_day   = CONV #( i_value+4(2) ) ).
+          iv_month = CONV #( i_value+4(2) )
+          iv_day   = CONV #( i_value+6(2) ) ).
       CATCH cx_no_check.
         RETURN.
     ENDTRY.
