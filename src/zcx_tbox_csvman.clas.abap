@@ -5,7 +5,7 @@ CLASS zcx_tbox_csvman DEFINITION
   CREATE PUBLIC.
 
   PUBLIC SECTION.
-    DATA text TYPE string.
+    DATA m_text TYPE string.
 
     INTERFACES if_t100_message.
     INTERFACES if_t100_dyn_msg.
@@ -13,7 +13,7 @@ CLASS zcx_tbox_csvman DEFINITION
     METHODS constructor
       IMPORTING textid    LIKE if_t100_message=>t100key OPTIONAL
                 !previous LIKE previous                 OPTIONAL
-                !text     TYPE string.
+                text      TYPE string.
 
   PROTECTED SECTION.
 
@@ -30,5 +30,6 @@ CLASS zcx_tbox_csvman IMPLEMENTATION.
     ELSE.
       if_t100_message~t100key = textid.
     ENDIF.
+    m_text = text.
   ENDMETHOD.
 ENDCLASS.
